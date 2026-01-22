@@ -1,6 +1,6 @@
 //
 //  EntryManager.swift
-//  CRACKHEAD CLUB
+//  CC
 //
 //  Created by Evan Roberts on 1/21/26.
 //
@@ -13,7 +13,7 @@ class EntryManager: ObservableObject {
     @Published var entries: [Entry] = []
     @Published var isSyncing = false
     
-    private let entriesKey = "CRACKHEAD_CLUB_ENTRIES"
+    private let entriesKey = "CC_ENTRIES"
     private let cloudKitService = CloudKitService()
     private var cancellables = Set<AnyCancellable>()
     

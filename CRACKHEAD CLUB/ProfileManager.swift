@@ -1,6 +1,6 @@
 //
 //  ProfileManager.swift
-//  CRACKHEAD CLUB
+//  CC
 //
 //  Created by Evan Roberts on 1/21/26.
 //
@@ -14,7 +14,7 @@ class ProfileManager: ObservableObject {
     
     @Published var currentProfile: UserProfile?
     
-    private let profileKey = "CRACKHEAD_CLUB_USER_PROFILE"
+    private let profileKey = "CC_USER_PROFILE"
     
     private init() {
         loadProfile()
@@ -28,7 +28,7 @@ class ProfileManager: ObservableObject {
         Task {
             do {
                 let record = profile.toCKRecord()
-                let container = CKContainer(identifier: "iCloud.cc.CRACKHEAD-CLUB")
+                let container = CKContainer(identifier: "iCloud.cc.CCApp")
                 let database = container.privateCloudDatabase
                 let _ = try await database.save(record)
                 print("✅ Saved profile to CloudKit")
@@ -60,7 +60,7 @@ class ProfileManager: ObservableObject {
         
         // Fetch from CloudKit
         do {
-            let container = CKContainer(identifier: "iCloud.cc.CRACKHEAD-CLUB")
+            let container = CKContainer(identifier: "iCloud.cc.CC")
             let database = container.privateCloudDatabase
             
             // Query for profile by name

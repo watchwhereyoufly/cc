@@ -1,6 +1,6 @@
 //
 //  UserProfile.swift
-//  CRACKHEAD CLUB
+//  CC
 //
 //  Created by Evan Roberts on 1/21/26.
 //

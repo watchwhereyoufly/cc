@@ -1,6 +1,6 @@
 //
-//  CRACKHEAD_CLUBApp.swift
-//  CRACKHEAD CLUB
+//  CCApp.swift
+//  CC
 //
 //  Created by Evan Roberts on 1/21/26.
 //
@@ -10,7 +10,7 @@ import CloudKit
 import UserNotifications
 
 @main
-struct CRACKHEAD_CLUBApp: App {
+struct CCApp: App {
     @StateObject private var entryManager = EntryManager()
     @StateObject private var authManager = AuthenticationManager()
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
@@ -29,7 +29,7 @@ struct CRACKHEAD_CLUBApp: App {
             Group {
                 if !authManager.isAuthenticated {
                     SignInView(authManager: authManager)
-                } else if !UserDefaults.standard.bool(forKey: "CRACKHEAD_CLUB_ONBOARDING_COMPLETE") || authManager.shouldShowOnboarding {
+                } else if !UserDefaults.standard.bool(forKey: "CC_ONBOARDING_COMPLETE") || authManager.shouldShowOnboarding {
                     OnboardingView(authManager: authManager)
                 } else {
                     ContentView()

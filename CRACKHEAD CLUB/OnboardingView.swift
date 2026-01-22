@@ -1,6 +1,6 @@
 //
 //  OnboardingView.swift
-//  CRACKHEAD CLUB
+//  CC
 //
 //  Created by Evan Roberts on 1/21/26.
 //
@@ -244,7 +244,7 @@ struct OnboardingView: View {
         VStack(spacing: 40) {
             Spacer()
             
-            Text("Welcome to the Crackhead Club,")
+            Text("Welcome to CC,")
                 .foregroundColor(.terminalGreen)
                 .font(.system(size: 20, design: .monospaced))
             
@@ -307,7 +307,7 @@ struct OnboardingView: View {
         ProfileManager.shared.saveProfile(profile)
         
         // Mark onboarding as complete
-        UserDefaults.standard.set(true, forKey: "CRACKHEAD_CLUB_ONBOARDING_COMPLETE")
+        UserDefaults.standard.set(true, forKey: "CC_ONBOARDING_COMPLETE")
         
         // Complete authentication
         authManager.completeOnboarding()

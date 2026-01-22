@@ -1,6 +1,6 @@
 //
 //  SignInView.swift
-//  CRACKHEAD CLUB
+//  CC
 //
 //  Created by Evan Roberts on 1/21/26.
 //
@@ -20,7 +20,7 @@ struct SignInView: View {
                 Spacer()
                 
                 // App Title
-                Text("CRACKHEAD CLUB")
+                Text("CC")
                     .foregroundColor(.terminalGreen)
                     .font(.system(size: 24, design: .monospaced))
                     .fontWeight(.bold)
@@ -45,7 +45,7 @@ struct SignInView: View {
                                 // User signed in with Apple - mark as completed
                                 print("✅ Signed in with Apple ID: \(appleIDCredential.user)")
                                 authManager.hasCompletedSignIn = true
-                                UserDefaults.standard.set(true, forKey: "CRACKHEAD_CLUB_HAS_SIGNED_IN")
+                                UserDefaults.standard.set(true, forKey: "CC_HAS_SIGNED_IN")
                                 
                                 // Give it a moment for iCloud to sync, then check CloudKit
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
@@ -155,7 +155,11 @@ extension SignInWithAppleButtonWrapper.Coordinator: ASAuthorizationControllerPre
                let window = windowScene.windows.first {
                 return window
             }
-            return UIWindow()
+            guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else {
+                // This should never happen in normal operation
+                return UIWindow()
+            }
+            return UIWindow(windowScene: windowScene)
         }
         return window
     }

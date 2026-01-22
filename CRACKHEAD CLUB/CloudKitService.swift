@@ -1,6 +1,6 @@
 //
 //  CloudKitService.swift
-//  CRACKHEAD CLUB
+//  CC
 //
 //  Created by Evan Roberts on 1/21/26.
 //
@@ -20,7 +20,7 @@ class CloudKitService: ObservableObject {
     @Published var lastSyncError: Error?
     
     init() {
-        container = CKContainer(identifier: "iCloud.cc.CRACKHEAD-CLUB")
+        container = CKContainer(identifier: "iCloud.cc.CCApp")
         database = container.privateCloudDatabase
         CloudKitService.shared = self
         setupSubscriptions()

@@ -1,6 +1,6 @@
 //
 //  ContentView.swift
-//  CRACKHEAD CLUB
+//  CC
 //
 //  Created by Evan Roberts on 1/21/26.
 //
@@ -30,7 +30,7 @@ struct ContentView: View {
                         Button(action: {
                             showCalendar = true
                         }) {
-                            Text("CRACKHEAD CLUB")
+                            Text("CC")
                                 .foregroundColor(.terminalGreen)
                                 .font(.system(size: 15, design: .monospaced))
                         }

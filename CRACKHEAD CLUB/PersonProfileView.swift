@@ -1,6 +1,6 @@
 //
 //  PersonProfileView.swift
-//  CRACKHEAD CLUB
+//  CC
 //
 //  Created by Evan Roberts on 1/21/26.
 //
@@ -162,11 +162,10 @@ struct PersonEntryRowView: View {
                     .foregroundColor(personColor)
                     .font(.system(size: 15, design: .monospaced))
                 
-                Text("Activity: ")
+                (Text("Activity: ")
                     .foregroundColor(.cyan)
-                    .font(.system(size: 15, design: .monospaced))
-                + Text(entry.activity)
-                    .foregroundColor(.terminalGreen)
+                    + Text(entry.activity)
+                    .foregroundColor(.terminalGreen))
                     .font(.system(size: 15, design: .monospaced))
                 
                 Spacer()
@@ -178,11 +177,10 @@ struct PersonEntryRowView: View {
                     .foregroundColor(personColor)
                     .font(.system(size: 15, design: .monospaced))
                 
-                Text("Assumption: ")
+                (Text("Assumption: ")
                     .foregroundColor(.cyan)
-                    .font(.system(size: 15, design: .monospaced))
-                + Text(entry.assumption)
-                    .foregroundColor(.terminalGreen)
+                    + Text(entry.assumption)
+                    .foregroundColor(.terminalGreen))
                     .font(.system(size: 15, design: .monospaced))
                 
                 Spacer()

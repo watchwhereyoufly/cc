@@ -1,6 +1,6 @@
 //
 //  AuthenticationManager.swift
-//  CRACKHEAD CLUB
+//  CC
 //
 //  Created by Evan Roberts on 1/21/26.
 //
@@ -18,10 +18,10 @@ class AuthenticationManager: NSObject, ObservableObject {
     @Published var shouldShowOnboarding = false // Track if onboarding should be shown
     
     private let container: CKContainer
-    private let signInKey = "CRACKHEAD_CLUB_HAS_SIGNED_IN"
+    private let signInKey = "CC_HAS_SIGNED_IN"
     
     override init() {
-        container = CKContainer(identifier: "iCloud.cc.CRACKHEAD-CLUB")
+        container = CKContainer(identifier: "iCloud.cc.CCApp")
         super.init()
         // Check if user has previously completed Sign in with Apple
         hasCompletedSignIn = UserDefaults.standard.bool(forKey: signInKey)
@@ -107,14 +107,14 @@ class AuthenticationManager: NSObject, ObservableObject {
     
     func completeOnboarding() {
         // Mark onboarding as complete and authenticate
-        UserDefaults.standard.set(true, forKey: "CRACKHEAD_CLUB_ONBOARDING_COMPLETE")
+                    UserDefaults.standard.set(true, forKey: "CC_ONBOARDING_COMPLETE")
         shouldShowOnboarding = false
         isAuthenticated = true
     }
     
     func resetOnboarding() {
         // Reset onboarding to allow user to go through it again
-        UserDefaults.standard.set(false, forKey: "CRACKHEAD_CLUB_ONBOARDING_COMPLETE")
+        UserDefaults.standard.set(false, forKey: "CC_ONBOARDING_COMPLETE")
         shouldShowOnboarding = true
     }
 }
