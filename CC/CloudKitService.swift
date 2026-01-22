@@ -49,7 +49,8 @@ class CloudKitService: ObservableObject {
     // MARK: - Fetch All Entries
     func fetchAllEntries() async throws -> [Entry] {
         let query = CKQuery(recordType: recordType, predicate: NSPredicate(value: true))
-        query.sortDescriptors = [NSSortDescriptor(key: "timestamp", ascending: false)]
+        // Note: Sorting is done in-memory after fetching to avoid CloudKit index requirements
+        // query.sortDescriptors = [NSSortDescriptor(key: "timestamp", ascending: false)]
         
         do {
             let (matchResults, _) = try await database.records(matching: query)
@@ -70,6 +71,9 @@ class CloudKitService: ObservableObject {
                     print("   ❌ Error fetching record: \(error)")
                 }
             }
+            
+            // Sort in-memory by timestamp (oldest first for messaging style)
+            entries.sort { $0.timestamp < $1.timestamp }
             
             print("📥 Total entries loaded: \(entries.count)")
             return entries
@@ -100,10 +104,10 @@ class CloudKitService: ObservableObject {
     
     // MARK: - Setup Subscriptions
     func setupSubscriptions() {
-        // Subscribe to new entries
+        // Subscribe to new entries - use a queryable field in predicate to avoid recordName issues
         let createSubscription = CKQuerySubscription(
             recordType: recordType,
-            predicate: NSPredicate(value: true),
+            predicate: NSPredicate(format: "timestamp > 0"), // Use a field that exists and is queryable
             subscriptionID: "EntryCreated",
             options: [.firesOnRecordCreation]
         )
@@ -115,7 +119,7 @@ class CloudKitService: ObservableObject {
         // Subscribe to deleted entries
         let deleteSubscription = CKQuerySubscription(
             recordType: recordType,
-            predicate: NSPredicate(value: true),
+            predicate: NSPredicate(format: "timestamp > 0"), // Use a field that exists and is queryable
             subscriptionID: "EntryDeleted",
             options: [.firesOnRecordDeletion]
         )
@@ -127,7 +131,7 @@ class CloudKitService: ObservableObject {
         // Subscribe to updated entries
         let updateSubscription = CKQuerySubscription(
             recordType: recordType,
-            predicate: NSPredicate(value: true),
+            predicate: NSPredicate(format: "timestamp > 0"), // Use a field that exists and is queryable
             subscriptionID: "EntryUpdated",
             options: [.firesOnRecordUpdate]
         )
@@ -144,8 +148,14 @@ class CloudKitService: ObservableObject {
                 print("✅ CloudKit subscriptions created")
             } catch {
                 // Subscription might already exist, that's okay
-                if let ckError = error as? CKError, ckError.code == .serverRecordChanged {
-                    print("ℹ️ Subscription already exists")
+                if let ckError = error as? CKError {
+                    if ckError.code == .serverRecordChanged {
+                        print("ℹ️ Subscription already exists")
+                    } else {
+                        print("⚠️ Error creating subscriptions: \(ckError)")
+                        print("   - Code: \(ckError.code.rawValue)")
+                        print("   - Description: \(ckError.localizedDescription)")
+                    }
                 } else {
                     print("⚠️ Error creating subscriptions: \(error)")
                 }

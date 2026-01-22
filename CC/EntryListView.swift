@@ -89,14 +89,8 @@ struct EntryRowView: View {
         VStack(alignment: .leading, spacing: 8) {
             // Handle location update entries with same formatting as regular entries
             if entry.entryType == .locationUpdate {
-                // Timestamp and author at top
+                // Timestamp at top
                 HStack {
-                    // Author info
-                    if let authorName = entry.authorName {
-                        Text("Posted by: \(authorName)")
-                            .foregroundColor(.terminalGreen.opacity(0.6))
-                            .font(.system(size: 9, design: .monospaced))
-                    }
                     Spacer()
                     Text("[\(timeFormatter.string(from: entry.timestamp))]")
                         .foregroundColor(.terminalGreen.opacity(0.7))
@@ -121,14 +115,8 @@ struct EntryRowView: View {
                 }
             } else {
                 // Regular entry display
-                // Timestamp and author at top
+                // Timestamp at top
                 HStack {
-                    // Author info
-                    if let authorName = entry.authorName {
-                        Text("Posted by: \(authorName)")
-                            .foregroundColor(.terminalGreen.opacity(0.6))
-                            .font(.system(size: 9, design: .monospaced))
-                    }
                     Spacer()
                     Text("[\(timeFormatter.string(from: entry.timestamp))]")
                         .foregroundColor(.terminalGreen.opacity(0.7))

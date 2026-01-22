@@ -83,8 +83,23 @@ struct PersonProfileView: View {
                                     Text(profile.idealVision)
                                         .foregroundColor(.terminalGreen)
                                         .font(.system(size: 15, design: .monospaced))
+                                        .multilineTextAlignment(.leading)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
                                 }
                                 .padding(.horizontal)
+                                
+                                // Current Location
+                                if let location = profile.currentLocation {
+                                    VStack(alignment: .leading, spacing: 8) {
+                                        Text("Current Location")
+                                            .foregroundColor(.terminalGreen.opacity(0.6))
+                                            .font(.system(size: 13, design: .monospaced))
+                                        Text(location)
+                                            .foregroundColor(.terminalGreen)
+                                            .font(.system(size: 15, design: .monospaced))
+                                    }
+                                    .padding(.horizontal)
+                                }
                             }
                             .padding(.bottom, 20)
                         } else {

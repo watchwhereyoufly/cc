@@ -69,11 +69,13 @@ struct ProfileView: View {
                                 Text("What is your ideal vision?")
                                     .foregroundColor(Color.terminalGreen.opacity(0.6))
                                     .font(.system(size: 13, design: .monospaced))
-                                HStack {
+                                HStack(alignment: .top) {
                                     Text(profile.idealVision)
                                         .foregroundColor(Color.terminalGreen)
                                         .font(.system(size: 15, design: .monospaced))
-                                        .lineLimit(3)
+                                        .lineLimit(nil)
+                                        .multilineTextAlignment(.leading)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
                                     Spacer()
                                     Image(systemName: "chevron.right")
                                         .foregroundColor(Color.terminalGreen.opacity(0.5))
