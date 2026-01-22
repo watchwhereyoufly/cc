@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		7615F7E12F220FEC00554E2D /* cclogo.icon in Resources */ = {isa = PBXBuildFile; fileRef = 7615F7E02F220FEC00554E2D /* cclogo.icon */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		76E938802F21B74E000AE9F0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -24,6 +28,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		7615F7E02F220FEC00554E2D /* cclogo.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = cclogo.icon; sourceTree = "<group>"; };
 		76E938722F21B74C000AE9F0 /* CRACKHEAD CLUB.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "CRACKHEAD CLUB.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		76E9387F2F21B74E000AE9F0 /* CRACKHEAD CLUBTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "CRACKHEAD CLUBTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		76E938892F21B74E000AE9F0 /* CRACKHEAD CLUBUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "CRACKHEAD CLUBUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -79,6 +84,7 @@
 				76E938822F21B74E000AE9F0 /* CRACKHEAD CLUBTests */,
 				76E9388C2F21B74E000AE9F0 /* CRACKHEAD CLUBUITests */,
 				76E938732F21B74C000AE9F0 /* Products */,
+				7615F7E02F220FEC00554E2D /* cclogo.icon */,
 			);
 			sourceTree = "<group>";
 		};
@@ -212,6 +218,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7615F7E12F220FEC00554E2D /* cclogo.icon in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -393,13 +400,18 @@
 		76E938942F21B74E000AE9F0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = cclogo;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "CRACKHEAD CLUB/CRACKHEAD CLUB.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = YDR3VLMRZ7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = CC;
+				INFOPLIST_KEY_NSCameraUsageDescription = "We need access to your photo library to add images to your entries.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "We need access to save images to your photo library.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "We need access to your photo library to add images to your entries.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -425,13 +437,18 @@
 		76E938952F21B74E000AE9F0 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = cclogo;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "CRACKHEAD CLUB/CRACKHEAD CLUB.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = YDR3VLMRZ7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = CC;
+				INFOPLIST_KEY_NSCameraUsageDescription = "We need access to your photo library to add images to your entries.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "We need access to save images to your photo library.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "We need access to your photo library to add images to your entries.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
