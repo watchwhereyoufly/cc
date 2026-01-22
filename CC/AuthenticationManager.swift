@@ -31,8 +31,16 @@ class AuthenticationManager: NSObject, ObservableObject {
             checkAuthenticationStatus()
         } else {
             // First time - show sign-in screen (don't check CloudKit yet)
-            isAuthenticated = false
-            isLoading = false
+            // Also check if profile exists - if not, require sign-in even if iCloud is available
+            let hasProfile = ProfileManager.shared.currentProfile != nil
+            if hasProfile {
+                // Has profile but no sign-in flag - might be from old version, check iCloud
+                checkAuthenticationStatus()
+            } else {
+                // No profile - definitely need sign-in
+                isAuthenticated = false
+                isLoading = false
+            }
         }
     }
     
@@ -57,6 +65,11 @@ class AuthenticationManager: NSObject, ObservableObject {
                     self.getCurrentUserID()
                     // Mark that sign-in is complete
                     UserDefaults.standard.set(true, forKey: self.signInKey)
+                    
+                    // Load profile from CloudKit after authentication
+                    Task {
+                        await ProfileManager.shared.loadProfileFromCloudKit()
+                    }
                 case .noAccount:
                     // No iCloud account - require sign-in
                     self.isAuthenticated = false

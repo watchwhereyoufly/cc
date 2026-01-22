@@ -104,7 +104,7 @@ struct Entry: Identifiable, Codable {
         self.activity = activity
         self.assumption = assumption
         self.timestamp = timestamp
-        self.cloudKitRecordID = record.recordID
+        self.cloudKitRecordIDString = record.recordID.recordName
         self.lastModified = record["lastModified"] as? Date ?? record.modificationDate ?? timestamp
         self.authorID = record["authorID"] as? String
         self.authorName = record["authorName"] as? String
@@ -116,6 +116,10 @@ struct Entry: Identifiable, Codable {
         } else {
             self.entryType = .regular // Default for old entries
         }
+        
+        // Initialize optional properties before using self
+        self.imageData = nil
+        self.imageURL = nil
         
         // Handle image from CKAsset
         if let imageAsset = record["image"] as? CKAsset {

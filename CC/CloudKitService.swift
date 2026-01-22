@@ -33,8 +33,15 @@ class CloudKitService: ObservableObject {
         do {
             let savedRecord = try await database.save(record)
             print("✅ Saved entry to CloudKit: \(savedRecord.recordID)")
+            print("   - Type: \(entry.entryType.rawValue)")
+            print("   - Person: \(entry.person)")
+            print("   - Activity: \(entry.activity.prefix(50))...")
         } catch {
             print("❌ Error saving to CloudKit: \(error)")
+            if let ckError = error as? CKError {
+                print("   - Code: \(ckError.code.rawValue)")
+                print("   - Description: \(ckError.localizedDescription)")
+            }
             throw error
         }
     }
@@ -48,20 +55,30 @@ class CloudKitService: ObservableObject {
             let (matchResults, _) = try await database.records(matching: query)
             var entries: [Entry] = []
             
+            print("📥 Fetching entries from CloudKit... Found \(matchResults.count) records")
+            
             for (_, result) in matchResults {
                 switch result {
                 case .success(let record):
                     if let entry = Entry(from: record) {
                         entries.append(entry)
+                        print("   ✅ Loaded entry: \(entry.id) - \(entry.entryType.rawValue)")
+                    } else {
+                        print("   ⚠️ Failed to decode entry from record: \(record.recordID)")
                     }
                 case .failure(let error):
-                    print("Error fetching record: \(error)")
+                    print("   ❌ Error fetching record: \(error)")
                 }
             }
             
+            print("📥 Total entries loaded: \(entries.count)")
             return entries
         } catch {
             print("❌ Error fetching from CloudKit: \(error)")
+            if let ckError = error as? CKError {
+                print("   - Code: \(ckError.code.rawValue)")
+                print("   - Description: \(ckError.localizedDescription)")
+            }
             throw error
         }
     }

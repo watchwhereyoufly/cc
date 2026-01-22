@@ -63,8 +63,17 @@ class EntryManager: ObservableObject {
             .store(in: &cancellables)
     }
     
-    func addLocationEntry(userName: String, location: String, isTravel: Bool = false) {
-        let message = isTravel ? "\(userName) is now in \(location)" : "\(userName) moved to \(location)"
+    func addLocationEntry(userName: String, location: String, isTravel: Bool = false, whatFor: String = "") {
+        let message: String
+        if isTravel {
+            if !whatFor.isEmpty {
+                message = "is now in \(location) for \(whatFor)"
+            } else {
+                message = "is now in \(location)"
+            }
+        } else {
+            message = "moved to \(location)"
+        }
         
         // Create a special entry for location updates
         let entry = Entry(

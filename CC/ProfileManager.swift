@@ -13,6 +13,7 @@ class ProfileManager: ObservableObject {
     static let shared = ProfileManager()
     
     @Published var currentProfile: UserProfile?
+    @Published var isLoadingFromCloudKit = false
     
     private let profileKey = "CC_USER_PROFILE"
     
@@ -27,21 +28,122 @@ class ProfileManager: ObservableObject {
         // Save to CloudKit
         Task {
             do {
-                let record = profile.toCKRecord()
+                // Ensure userCloudKitID is set
+                var profileToSave = profile
+                if profileToSave.userCloudKitID == nil {
+                    let container = CKContainer(identifier: "iCloud.cc.crackheadclub.CCApp")
+                    let userRecordID = try await container.userRecordID()
+                    profileToSave.userCloudKitID = userRecordID.recordName
+                    await MainActor.run {
+                        self.currentProfile = profileToSave
+                        self.saveProfileLocally()
+                    }
+                }
+                
+                let record = profileToSave.toCKRecord()
                 let container = CKContainer(identifier: "iCloud.cc.crackheadclub.CCApp")
                 let database = container.publicCloudDatabase
-                let _ = try await database.save(record)
-                print("✅ Saved profile to CloudKit")
+                let savedRecord = try await database.save(record)
+                print("✅ Saved profile to CloudKit: \(savedRecord.recordID)")
             } catch {
-                print("Failed to save profile to CloudKit: \(error)")
+                print("❌ Failed to save profile to CloudKit: \(error)")
             }
         }
     }
     
     func loadProfile() {
+        // First try local storage
         if let data = UserDefaults.standard.data(forKey: profileKey),
            let decoded = try? JSONDecoder().decode(UserProfile.self, from: data) {
             currentProfile = decoded
+        }
+        
+        // Then try to load from CloudKit if we have a user ID
+        Task {
+            await loadProfileFromCloudKit()
+        }
+    }
+    
+    func loadProfileFromCloudKit() async {
+        await MainActor.run {
+            isLoadingFromCloudKit = true
+        }
+        
+        // Get current user ID from CloudKit
+        let container = CKContainer(identifier: "iCloud.cc.crackheadclub.CCApp")
+        
+        do {
+            let userRecordID = try await container.userRecordID()
+            let userIDString = userRecordID.recordName
+            let database = container.publicCloudDatabase
+            
+            // Query for profile by userCloudKitID
+            let predicate = NSPredicate(format: "userCloudKitID == %@", userIDString)
+            let query = CKQuery(recordType: "UserProfile", predicate: predicate)
+            
+            let (matchResults, _) = try await database.records(matching: query)
+            
+            for (_, result) in matchResults {
+                switch result {
+                case .success(let record):
+                    if let profile = UserProfile(from: record) {
+                        await MainActor.run {
+                            self.currentProfile = profile
+                            self.saveProfileLocally()
+                            self.isLoadingFromCloudKit = false
+                            // Mark onboarding as complete since we found the profile
+                            UserDefaults.standard.set(true, forKey: "CC_ONBOARDING_COMPLETE")
+                        }
+                        print("✅ Loaded profile from CloudKit for user: \(userIDString)")
+                        return
+                    }
+                case .failure(let error):
+                    print("Error fetching profile record: \(error)")
+                }
+            }
+            
+            // If no profile found by userCloudKitID, try to find any profile (for backward compatibility)
+            // This handles old profiles that don't have userCloudKitID set
+            if currentProfile == nil {
+                let allQuery = CKQuery(recordType: "UserProfile", predicate: NSPredicate(value: true))
+                let (allResults, _) = try await database.records(matching: allQuery)
+                
+                for (_, result) in allResults {
+                    switch result {
+                    case .success(let record):
+                        if let profile = UserProfile(from: record) {
+                            // Update it with the current user's ID and save it
+                            var updatedProfile = profile
+                            updatedProfile.userCloudKitID = userIDString
+                            await MainActor.run {
+                                self.currentProfile = updatedProfile
+                                self.saveProfileLocally()
+                            }
+                            // Save the updated profile back to CloudKit
+                            self.saveProfile(updatedProfile)
+                            await MainActor.run {
+                                self.isLoadingFromCloudKit = false
+                                // Mark onboarding as complete since we found the profile
+                                UserDefaults.standard.set(true, forKey: "CC_ONBOARDING_COMPLETE")
+                            }
+                            print("✅ Found and updated old profile from CloudKit")
+                            return
+                        }
+                    case .failure(let error):
+                        print("Error fetching profile record: \(error)")
+                    }
+                }
+            }
+            
+            // No profile found in CloudKit
+            await MainActor.run {
+                self.isLoadingFromCloudKit = false
+            }
+        } catch {
+            print("Failed to load profile from CloudKit: \(error)")
+            await MainActor.run {
+                self.isLoadingFromCloudKit = false
+            }
         }
     }
     

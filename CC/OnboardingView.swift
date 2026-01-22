@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import CloudKit
 
 enum OnboardingStep {
     case whoAreYou
@@ -368,24 +369,40 @@ struct OnboardingView: View {
         // Create initial location history entry
         let initialLocation = LocationHistory(location: currentLocation, date: Date(), isTravel: false)
         
-        let profile = UserProfile(
-            name: selectedName,
-            idealVision: idealVision,
-            selfieData: selfieData,
-            currentLocation: currentLocation,
-            locationHistory: [initialLocation]
-        )
-        
-        // Save profile
-        ProfileManager.shared.saveProfile(profile)
-        
-        // Create location entry in timeline
-        entryManager.addLocationEntry(userName: selectedName, location: currentLocation, isTravel: false)
-        
-        // Mark onboarding as complete
-        UserDefaults.standard.set(true, forKey: "CC_ONBOARDING_COMPLETE")
-        
-        // Complete authentication
-        authManager.completeOnboarding()
+        // Get user's CloudKit ID
+        Task {
+            let container = CKContainer(identifier: "iCloud.cc.crackheadclub.CCApp")
+            var userCloudKitID: String? = nil
+            
+            do {
+                let userRecordID = try await container.userRecordID()
+                userCloudKitID = userRecordID.recordName
+            } catch {
+                print("Error getting user ID: \(error)")
+            }
+            
+            await MainActor.run {
+                let profile = UserProfile(
+                    name: selectedName,
+                    idealVision: idealVision,
+                    selfieData: selfieData,
+                    currentLocation: currentLocation,
+                    locationHistory: [initialLocation],
+                    userCloudKitID: userCloudKitID
+                )
+                
+                // Save profile
+                ProfileManager.shared.saveProfile(profile)
+                
+                // Create location entry in timeline
+                entryManager.addLocationEntry(userName: selectedName, location: currentLocation, isTravel: false)
+                
+                // Mark onboarding as complete
+                UserDefaults.standard.set(true, forKey: "CC_ONBOARDING_COMPLETE")
+                
+                // Complete authentication
+                authManager.completeOnboarding()
+            }
+        }
     }
 }

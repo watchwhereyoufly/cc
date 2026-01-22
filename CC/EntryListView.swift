@@ -87,16 +87,37 @@ struct EntryRowView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            // Handle location update entries differently
+            // Handle location update entries with same formatting as regular entries
             if entry.entryType == .locationUpdate {
+                // Timestamp and author at top
                 HStack {
-                    Text(entry.activity)
-                        .foregroundColor(.terminalGreen)
-                        .font(.system(size: 15, design: .monospaced))
+                    // Author info
+                    if let authorName = entry.authorName {
+                        Text("Posted by: \(authorName)")
+                            .foregroundColor(.terminalGreen.opacity(0.6))
+                            .font(.system(size: 9, design: .monospaced))
+                    }
                     Spacer()
                     Text("[\(timeFormatter.string(from: entry.timestamp))]")
                         .foregroundColor(.terminalGreen.opacity(0.7))
                         .font(.system(size: 10, design: .monospaced))
+                }
+                
+                // Location entry with color-coded person name
+                HStack(alignment: .top, spacing: 4) {
+                    Button(action: {
+                        showPersonProfile = true
+                    }) {
+                        Text("<@\(entry.person.lowercased())>")
+                            .foregroundColor(personColor)
+                            .font(.system(size: 15, design: .monospaced))
+                    }
+                    
+                    Text(entry.activity)
+                        .foregroundColor(.terminalGreen)
+                        .font(.system(size: 15, design: .monospaced))
+                    
+                    Spacer()
                 }
             } else {
                 // Regular entry display

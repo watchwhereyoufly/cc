@@ -12,8 +12,10 @@ struct ProfileView: View {
     @ObservedObject var authManager: AuthenticationManager
     @EnvironmentObject var entryManager: EntryManager
     @Environment(\.dismiss) var dismiss
-    @State private var showResetConfirmation = false
     @State private var showLocationUpdate = false
+    @State private var showEditName = false
+    @State private var showEditIdealVision = false
+    @State private var showEditSelfie = false
     
     var body: some View {
         ZStack {
@@ -23,13 +25,9 @@ struct ProfileView: View {
                 VStack(alignment: .leading, spacing: 24) {
                     // Header
                     HStack {
-                        Button(action: {
-                            showResetConfirmation = true
-                        }) {
-                            Text("Profile")
-                                .foregroundColor(Color.terminalGreen)
-                                .font(.system(size: 20, design: .monospaced))
-                        }
+                        Text("Profile")
+                            .foregroundColor(Color.terminalGreen)
+                            .font(.system(size: 20, design: .monospaced))
                         Spacer()
                         Button(action: {
                             dismiss()
@@ -40,48 +38,60 @@ struct ProfileView: View {
                         }
                     }
                     .padding()
-                    .alert("Edit Profile", isPresented: $showResetConfirmation) {
-                        Button("Cancel", role: .cancel) { }
-                        Button("Edit", role: .destructive) {
-                            authManager.resetOnboarding()
-                            dismiss()
-                        }
-                    } message: {
-                        Text("Are you sure you want to edit your profile? This will take you back to the onboarding flow where you can update your name, ideal vision, and selfie.")
-                    }
                     
                     if let profile = profileManager.currentProfile {
-                        // Name
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("Who are you?")
-                                .foregroundColor(Color.terminalGreen.opacity(0.6))
-                                .font(.system(size: 13, design: .monospaced))
-                            Text(profile.name)
-                                .foregroundColor(Color.terminalGreen)
-                                .font(.system(size: 15, design: .monospaced))
+                        // Name - tappable to edit
+                        Button(action: {
+                            showEditName = true
+                        }) {
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("Who are you?")
+                                    .foregroundColor(Color.terminalGreen.opacity(0.6))
+                                    .font(.system(size: 13, design: .monospaced))
+                                HStack {
+                                    Text(profile.name)
+                                        .foregroundColor(Color.terminalGreen)
+                                        .font(.system(size: 15, design: .monospaced))
+                                    Spacer()
+                                    Image(systemName: "chevron.right")
+                                        .foregroundColor(Color.terminalGreen.opacity(0.5))
+                                        .font(.system(size: 12))
+                                }
+                            }
+                            .padding(.horizontal)
                         }
-                        .padding(.horizontal)
                         
-                        // Ideal Vision
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("What is your ideal vision?")
-                                .foregroundColor(Color.terminalGreen.opacity(0.6))
-                                .font(.system(size: 13, design: .monospaced))
-                            Text(profile.idealVision)
-                                .foregroundColor(Color.terminalGreen)
-                                .font(.system(size: 15, design: .monospaced))
+                        // Ideal Vision - tappable to edit
+                        Button(action: {
+                            showEditIdealVision = true
+                        }) {
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("What is your ideal vision?")
+                                    .foregroundColor(Color.terminalGreen.opacity(0.6))
+                                    .font(.system(size: 13, design: .monospaced))
+                                HStack {
+                                    Text(profile.idealVision)
+                                        .foregroundColor(Color.terminalGreen)
+                                        .font(.system(size: 15, design: .monospaced))
+                                        .lineLimit(3)
+                                    Spacer()
+                                    Image(systemName: "chevron.right")
+                                        .foregroundColor(Color.terminalGreen.opacity(0.5))
+                                        .font(.system(size: 12))
+                                }
+                            }
+                            .padding(.horizontal)
                         }
-                        .padding(.horizontal)
                         
-                        // Current Location
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("Current Location")
-                                .foregroundColor(Color.terminalGreen.opacity(0.6))
-                                .font(.system(size: 13, design: .monospaced))
-                            
-                            Button(action: {
-                                showLocationUpdate = true
-                            }) {
+                        // Current Location - tappable to edit
+                        Button(action: {
+                            showLocationUpdate = true
+                        }) {
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("Current Location")
+                                    .foregroundColor(Color.terminalGreen.opacity(0.6))
+                                    .font(.system(size: 13, design: .monospaced))
+                                
                                 HStack {
                                     if let location = profile.currentLocation {
                                         Text(location)
@@ -98,48 +108,54 @@ struct ProfileView: View {
                                         .font(.system(size: 12))
                                 }
                             }
-                            
-                            // Location Timeline
-                            if !profile.locationHistory.isEmpty {
-                                VStack(alignment: .leading, spacing: 8) {
-                                    Text("Location History")
-                                        .foregroundColor(Color.terminalGreen.opacity(0.6))
-                                        .font(.system(size: 12, design: .monospaced))
-                                        .padding(.top, 8)
-                                    
-                                    ForEach(profile.locationHistory.sorted(by: { $0.date < $1.date })) { location in
-                                        HStack {
-                                            Text(location.location)
-                                                .foregroundColor(Color.terminalGreen)
-                                                .font(.system(size: 13, design: .monospaced))
-                                            Spacer()
-                                            Text(location.date, style: .date)
-                                                .foregroundColor(Color.terminalGreen.opacity(0.6))
-                                                .font(.system(size: 11, design: .monospaced))
-                                        }
-                                        .padding(.vertical, 4)
-                                    }
-                                }
-                            }
+                            .padding(.horizontal)
                         }
-                        .padding(.horizontal)
                         
-                        // Selfie
-                        if let selfieData = profile.selfieData, let selfieImage = UIImage(data: selfieData) {
+                        // Selfie - tappable to edit
+                        Button(action: {
+                            showEditSelfie = true
+                        }) {
                             VStack(alignment: .leading, spacing: 8) {
                                 Text("Your Selfie")
                                     .foregroundColor(Color.terminalGreen.opacity(0.6))
                                     .font(.system(size: 13, design: .monospaced))
                                 
-                                Image(uiImage: selfieImage)
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 200, height: 200)
-                                    .clipShape(Circle())
-                                    .overlay(
+                                if let selfieData = profile.selfieData, let selfieImage = UIImage(data: selfieData) {
+                                    HStack {
+                                        Image(uiImage: selfieImage)
+                                            .resizable()
+                                            .scaledToFill()
+                                            .frame(width: 80, height: 80)
+                                            .clipShape(Circle())
+                                            .overlay(
+                                                Circle()
+                                                    .stroke(Color.terminalGreen, lineWidth: 2)
+                                            )
+                                        Spacer()
+                                        Image(systemName: "chevron.right")
+                                            .foregroundColor(Color.terminalGreen.opacity(0.5))
+                                            .font(.system(size: 12))
+                                    }
+                                } else {
+                                    HStack {
                                         Circle()
-                                            .stroke(Color.terminalGreen, lineWidth: 2)
-                                    )
+                                            .fill(Color.black)
+                                            .frame(width: 80, height: 80)
+                                            .overlay(
+                                                Circle()
+                                                    .stroke(Color.terminalGreen.opacity(0.5), lineWidth: 2)
+                                            )
+                                            .overlay(
+                                                Image(systemName: "camera.fill")
+                                                    .foregroundColor(.terminalGreen.opacity(0.5))
+                                                    .font(.system(size: 30))
+                                            )
+                                        Spacer()
+                                        Image(systemName: "chevron.right")
+                                            .foregroundColor(Color.terminalGreen.opacity(0.5))
+                                            .font(.system(size: 12))
+                                    }
+                                }
                             }
                             .padding(.horizontal)
                         }
@@ -156,6 +172,15 @@ struct ProfileView: View {
         .preferredColorScheme(.dark)
         .sheet(isPresented: $showLocationUpdate) {
             LocationUpdateView(entryManager: entryManager)
+        }
+        .sheet(isPresented: $showEditName) {
+            EditNameView()
+        }
+        .sheet(isPresented: $showEditIdealVision) {
+            EditIdealVisionView()
+        }
+        .sheet(isPresented: $showEditSelfie) {
+            EditSelfieView()
         }
     }
 }

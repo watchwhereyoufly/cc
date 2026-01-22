@@ -13,6 +13,7 @@ struct LocationUpdateView: View {
     @Environment(\.dismiss) var dismiss
     
     @State private var newLocation: String = ""
+    @State private var whatFor: String = ""
     @State private var isTravel: Bool = false
     @State private var showLocationInput = false
     @State private var selectedAction: String? = nil
@@ -48,6 +49,32 @@ struct LocationUpdateView: View {
                         Text(currentLocation)
                             .foregroundColor(.terminalGreen)
                             .font(.system(size: 15, design: .monospaced))
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal)
+                }
+                
+                // Location History
+                if let profile = profileManager.currentProfile,
+                   !profile.locationHistory.isEmpty {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Location History")
+                            .foregroundColor(.terminalGreen.opacity(0.6))
+                            .font(.system(size: 13, design: .monospaced))
+                            .padding(.top, 8)
+                        
+                        ForEach(profile.locationHistory.sorted(by: { $0.date < $1.date })) { location in
+                            HStack {
+                                Text(location.location)
+                                    .foregroundColor(.terminalGreen)
+                                    .font(.system(size: 13, design: .monospaced))
+                                Spacer()
+                                Text(location.date, style: .date)
+                                    .foregroundColor(.terminalGreen.opacity(0.6))
+                                    .font(.system(size: 11, design: .monospaced))
+                            }
+                            .padding(.vertical, 4)
+                        }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal)
@@ -114,11 +141,39 @@ struct LocationUpdateView: View {
                                 .stroke(Color.terminalGreen.opacity(0.5), lineWidth: 1)
                         )
                         
+                        // "What for?" field - only show for travel
+                        if isTravel {
+                            Text("What for?")
+                                .foregroundColor(.terminalGreen)
+                                .font(.system(size: 15, design: .monospaced))
+                            
+                            ZStack(alignment: .topLeading) {
+                                if whatFor.isEmpty {
+                                    Text("Enter reason...")
+                                        .foregroundColor(.terminalGreen.opacity(0.5))
+                                        .font(.system(size: 15, design: .monospaced))
+                                        .padding(.horizontal, 4)
+                                        .padding(.vertical, 12)
+                                }
+                                TextField("", text: $whatFor)
+                                    .textFieldStyle(.plain)
+                                    .foregroundColor(.terminalGreen)
+                                    .font(.system(size: 15, design: .monospaced))
+                                    .padding(12)
+                            }
+                            .background(Color.black)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 4)
+                                    .stroke(Color.terminalGreen.opacity(0.5), lineWidth: 1)
+                            )
+                        }
+                        
                         HStack(spacing: 12) {
                             Button(action: {
                                 showLocationInput = false
                                 selectedAction = nil
                                 newLocation = ""
+                                whatFor = ""
                             }) {
                                 Text("Cancel")
                                     .foregroundColor(.terminalGreen)
@@ -140,10 +195,10 @@ struct LocationUpdateView: View {
                                     .font(.system(size: 15, design: .monospaced))
                                     .frame(maxWidth: .infinity)
                                     .padding(16)
-                                    .background(newLocation.isEmpty ? Color.terminalGreen.opacity(0.5) : Color.terminalGreen)
+                                    .background(newLocation.isEmpty || (isTravel && whatFor.isEmpty) ? Color.terminalGreen.opacity(0.5) : Color.terminalGreen)
                                     .cornerRadius(4)
                             }
-                            .disabled(newLocation.isEmpty)
+                            .disabled(newLocation.isEmpty || (isTravel && whatFor.isEmpty))
                         }
                     }
                     .padding(.horizontal)
@@ -163,7 +218,7 @@ struct LocationUpdateView: View {
         
         if isTravel {
             // Just create entry, don't update profile
-            entryManager.addLocationEntry(userName: userName, location: newLocation, isTravel: true)
+            entryManager.addLocationEntry(userName: userName, location: newLocation, isTravel: true, whatFor: whatFor)
         } else {
             // Update profile with new location
             var updatedHistory = profile.locationHistory

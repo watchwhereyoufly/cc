@@ -17,6 +17,7 @@ struct UserProfile: Codable {
     var currentLocation: String?
     var locationHistory: [LocationHistory]
     var cloudKitRecordIDString: String?
+    var userCloudKitID: String? // CloudKit user ID who owns this profile
     
     var cloudKitRecordID: CKRecord.ID? {
         get {
@@ -28,7 +29,7 @@ struct UserProfile: Codable {
         }
     }
     
-    init(id: UUID = UUID(), name: String, idealVision: String, selfieData: Data? = nil, createdAt: Date = Date(), currentLocation: String? = nil, locationHistory: [LocationHistory] = [], cloudKitRecordID: CKRecord.ID? = nil) {
+    init(id: UUID = UUID(), name: String, idealVision: String, selfieData: Data? = nil, createdAt: Date = Date(), currentLocation: String? = nil, locationHistory: [LocationHistory] = [], cloudKitRecordID: CKRecord.ID? = nil, userCloudKitID: String? = nil) {
         self.id = id
         self.name = name
         self.idealVision = idealVision
@@ -37,6 +38,7 @@ struct UserProfile: Codable {
         self.currentLocation = currentLocation
         self.locationHistory = locationHistory
         self.cloudKitRecordIDString = cloudKitRecordID?.recordName
+        self.userCloudKitID = userCloudKitID
     }
     
     // MARK: - CloudKit Conversion
@@ -60,6 +62,11 @@ struct UserProfile: Codable {
                let historyString = String(data: historyData, encoding: .utf8) {
                 record["locationHistory"] = historyString
             }
+        }
+        
+        // Store user's CloudKit ID
+        if let userCloudKitID = userCloudKitID {
+            record["userCloudKitID"] = userCloudKitID
         }
         
         // Handle selfie as CKAsset
@@ -91,6 +98,7 @@ struct UserProfile: Codable {
         self.createdAt = createdAt
         self.currentLocation = record["currentLocation"] as? String
         self.cloudKitRecordIDString = record.recordID.recordName
+        self.userCloudKitID = record["userCloudKitID"] as? String
         
         // Load location history from JSON
         if let historyString = record["locationHistory"] as? String,
