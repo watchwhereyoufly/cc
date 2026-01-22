@@ -14,6 +14,8 @@ struct UserProfile: Codable {
     let idealVision: String
     let selfieData: Data?
     let createdAt: Date
+    var currentLocation: String?
+    var locationHistory: [LocationHistory]
     var cloudKitRecordIDString: String?
     
     var cloudKitRecordID: CKRecord.ID? {
@@ -26,12 +28,14 @@ struct UserProfile: Codable {
         }
     }
     
-    init(id: UUID = UUID(), name: String, idealVision: String, selfieData: Data? = nil, createdAt: Date = Date(), cloudKitRecordID: CKRecord.ID? = nil) {
+    init(id: UUID = UUID(), name: String, idealVision: String, selfieData: Data? = nil, createdAt: Date = Date(), currentLocation: String? = nil, locationHistory: [LocationHistory] = [], cloudKitRecordID: CKRecord.ID? = nil) {
         self.id = id
         self.name = name
         self.idealVision = idealVision
         self.selfieData = selfieData
         self.createdAt = createdAt
+        self.currentLocation = currentLocation
+        self.locationHistory = locationHistory
         self.cloudKitRecordIDString = cloudKitRecordID?.recordName
     }
     
@@ -44,6 +48,19 @@ struct UserProfile: Codable {
         record["name"] = name
         record["idealVision"] = idealVision
         record["createdAt"] = createdAt
+        
+        // Store location data
+        if let currentLocation = currentLocation {
+            record["currentLocation"] = currentLocation
+        }
+        
+        // Store location history as JSON
+        if !locationHistory.isEmpty {
+            if let historyData = try? JSONEncoder().encode(locationHistory),
+               let historyString = String(data: historyData, encoding: .utf8) {
+                record["locationHistory"] = historyString
+            }
+        }
         
         // Handle selfie as CKAsset
         if let selfieData = selfieData {
@@ -72,7 +89,17 @@ struct UserProfile: Codable {
         self.name = name
         self.idealVision = idealVision
         self.createdAt = createdAt
+        self.currentLocation = record["currentLocation"] as? String
         self.cloudKitRecordIDString = record.recordID.recordName
+        
+        // Load location history from JSON
+        if let historyString = record["locationHistory"] as? String,
+           let historyData = historyString.data(using: .utf8),
+           let decodedHistory = try? JSONDecoder().decode([LocationHistory].self, from: historyData) {
+            self.locationHistory = decodedHistory
+        } else {
+            self.locationHistory = []
+        }
         
         // Handle selfie from CKAsset
         var loadedSelfieData: Data? = nil

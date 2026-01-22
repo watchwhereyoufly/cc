@@ -21,7 +21,7 @@ class AuthenticationManager: NSObject, ObservableObject {
     private let signInKey = "CC_HAS_SIGNED_IN"
     
     override init() {
-        container = CKContainer(identifier: "iCloud.cc.CCApp")
+        container = CKContainer(identifier: "iCloud.cc.crackheadclub.CCApp")
         super.init()
         // Check if user has previously completed Sign in with Apple
         hasCompletedSignIn = UserDefaults.standard.bool(forKey: signInKey)

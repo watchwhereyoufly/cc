@@ -16,12 +16,42 @@ class EntryManager: ObservableObject {
     private let entriesKey = "CC_ENTRIES"
     private let cloudKitService = CloudKitService()
     private var cancellables = Set<AnyCancellable>()
+    @Published var currentUserID: String?
+    @Published var currentUserName: String?
     
     init() {
         loadEntries()
         setupCloudKitObserver()
         setupNotificationObserver()
+        setupProfileObserver()
+        getCurrentUserInfo()
         syncWithCloudKit()
+    }
+    
+    private func setupProfileObserver() {
+        // Observe profile changes to update author name
+        ProfileManager.shared.$currentProfile
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] profile in
+                self?.currentUserName = profile?.name
+            }
+            .store(in: &cancellables)
+    }
+    
+    private func getCurrentUserInfo() {
+        Task {
+            // Get user ID from CloudKit
+            if let userID = await cloudKitService.getCurrentUserID() {
+                await MainActor.run {
+                    self.currentUserID = userID
+                }
+            }
+            
+            // Get user name from profile
+            await MainActor.run {
+                self.currentUserName = ProfileManager.shared.currentProfile?.name
+            }
+        }
     }
     
     private func setupNotificationObserver() {
@@ -33,9 +63,46 @@ class EntryManager: ObservableObject {
             .store(in: &cancellables)
     }
     
+    func addLocationEntry(userName: String, location: String, isTravel: Bool = false) {
+        let message = isTravel ? "\(userName) is now in \(location)" : "\(userName) moved to \(location)"
+        
+        // Create a special entry for location updates
+        let entry = Entry(
+            person: userName,
+            activity: message,
+            assumption: "",
+            imageData: nil,
+            authorID: currentUserID,
+            authorName: currentUserName ?? userName,
+            entryType: .locationUpdate
+        )
+        entries.append(entry)
+        saveEntriesLocally()
+        
+        // Save to CloudKit
+        Task {
+            do {
+                try await cloudKitService.saveEntry(entry)
+            } catch {
+                print("Failed to save location entry to CloudKit: \(error)")
+            }
+        }
+    }
+    
     func addEntry(person: String, activity: String, assumption: String, imageData: Data? = nil) {
-        let entry = Entry(person: person, activity: activity, assumption: assumption, imageData: imageData)
-        entries.insert(entry, at: 0) // Add to beginning for newest first
+        // Get current user info for author identification
+        let authorID = currentUserID
+        let authorName = currentUserName ?? person // Fallback to person name if no profile name
+        
+        let entry = Entry(
+            person: person,
+            activity: activity,
+            assumption: assumption,
+            imageData: imageData,
+            authorID: authorID,
+            authorName: authorName
+        )
+        entries.append(entry) // Add to end for messaging style (newest at bottom)
         saveEntriesLocally()
         
         // Save to CloudKit asynchronously
@@ -116,8 +183,8 @@ class EntryManager: ObservableObject {
             }
         }
         
-        // Sort by timestamp (newest first)
-        mergedEntries.sort { $0.timestamp > $1.timestamp }
+        // Sort by timestamp (oldest first for messaging style)
+        mergedEntries.sort { $0.timestamp < $1.timestamp }
         
         entries = mergedEntries
         saveEntriesLocally()
@@ -146,7 +213,7 @@ class EntryManager: ObservableObject {
     private func loadEntries() {
         if let data = UserDefaults.standard.data(forKey: entriesKey),
            let decoded = try? JSONDecoder().decode([Entry].self, from: data) {
-            entries = decoded.sorted { $0.timestamp > $1.timestamp } // Newest first
+            entries = decoded.sorted { $0.timestamp < $1.timestamp } // Oldest first for messaging style
         }
     }
 }

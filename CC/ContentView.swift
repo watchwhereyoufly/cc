@@ -7,10 +7,6 @@
 
 import SwiftUI
 
-extension Color {
-    static let terminalGreen = Color(red: 0.0, green: 1.0, blue: 0.0) // Bright terminal green
-}
-
 struct ContentView: View {
     @EnvironmentObject var entryManager: EntryManager
     @EnvironmentObject var authManager: AuthenticationManager
@@ -30,7 +26,7 @@ struct ContentView: View {
                         Button(action: {
                             showCalendar = true
                         }) {
-                            Text("CC")
+                            Text("CClub")
                                 .foregroundColor(.terminalGreen)
                                 .font(.system(size: 15, design: .monospaced))
                         }

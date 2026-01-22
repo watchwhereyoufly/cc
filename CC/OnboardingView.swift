@@ -10,6 +10,7 @@ import SwiftUI
 enum OnboardingStep {
     case whoAreYou
     case idealVision
+    case currentLocation
     case takeSelfie
     case welcome
 }
@@ -17,9 +18,11 @@ enum OnboardingStep {
 struct OnboardingView: View {
     @ObservedObject var authManager: AuthenticationManager
     @ObservedObject private var profileManager = ProfileManager.shared
+    @EnvironmentObject var entryManager: EntryManager
     @State private var currentStep: OnboardingStep = .whoAreYou
     @State private var selectedName: String = ""
     @State private var idealVision: String = ""
+    @State private var currentLocation: String = ""
     @State private var selfieImage: UIImage?
     @State private var showCamera = false
     @State private var opacity: Double = 0
@@ -34,6 +37,8 @@ struct OnboardingView: View {
                     whoAreYouView
                 case .idealVision:
                     idealVisionView
+                case .currentLocation:
+                    currentLocationView
                 case .takeSelfie:
                     takeSelfieView
                 case .welcome:
@@ -47,6 +52,7 @@ struct OnboardingView: View {
             if let existingProfile = profileManager.currentProfile {
                 selectedName = existingProfile.name
                 idealVision = existingProfile.idealVision
+                currentLocation = existingProfile.currentLocation ?? ""
                 if let selfieData = existingProfile.selfieData {
                     selfieImage = UIImage(data: selfieData)
                 }
@@ -156,6 +162,65 @@ struct OnboardingView: View {
                     .cornerRadius(4)
             }
             .disabled(idealVision.isEmpty)
+            .padding(.horizontal, 40)
+            .padding(.top, 20)
+            
+            Spacer()
+        }
+    }
+    
+    // MARK: - Current Location View
+    private var currentLocationView: some View {
+        VStack(spacing: 30) {
+            Spacer()
+            
+            Text("What's your current location?")
+                .foregroundColor(.terminalGreen)
+                .font(.system(size: 20, design: .monospaced))
+            
+            Text("Where are you right now?")
+                .foregroundColor(.terminalGreen.opacity(0.7))
+                .font(.system(size: 15, design: .monospaced))
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 40)
+                .padding(.bottom, 20)
+            
+            ZStack(alignment: .topLeading) {
+                if currentLocation.isEmpty {
+                    Text("Miami, FL")
+                        .foregroundColor(.terminalGreen.opacity(0.5))
+                        .font(.system(size: 15, design: .monospaced))
+                        .padding(.horizontal, 4)
+                        .padding(.vertical, 12)
+                }
+                TextField("", text: $currentLocation)
+                    .textFieldStyle(.plain)
+                    .foregroundColor(.terminalGreen)
+                    .font(.system(size: 15, design: .monospaced))
+                    .padding(12)
+            }
+            .background(Color.black)
+            .overlay(
+                RoundedRectangle(cornerRadius: 4)
+                    .stroke(Color.terminalGreen.opacity(0.5), lineWidth: 1)
+            )
+            .frame(height: 50)
+            .padding(.horizontal, 40)
+            
+            Button(action: {
+                if !currentLocation.isEmpty {
+                    nextStep()
+                }
+            }) {
+                Text("Continue")
+                    .foregroundColor(.black)
+                    .font(.system(size: 15, design: .monospaced))
+                    .frame(maxWidth: .infinity)
+                    .padding(16)
+                    .background(currentLocation.isEmpty ? Color.terminalGreen.opacity(0.5) : Color.terminalGreen)
+                    .cornerRadius(4)
+            }
+            .disabled(currentLocation.isEmpty)
             .padding(.horizontal, 40)
             .padding(.top, 20)
             
@@ -282,6 +347,8 @@ struct OnboardingView: View {
             case .whoAreYou:
                 currentStep = .idealVision
             case .idealVision:
+                currentStep = .currentLocation
+            case .currentLocation:
                 currentStep = .takeSelfie
             case .takeSelfie:
                 currentStep = .welcome
@@ -297,14 +364,23 @@ struct OnboardingView: View {
     
     private func completeOnboarding() {
         let selfieData = selfieImage?.jpegData(compressionQuality: 0.8)
+        
+        // Create initial location history entry
+        let initialLocation = LocationHistory(location: currentLocation, date: Date(), isTravel: false)
+        
         let profile = UserProfile(
             name: selectedName,
             idealVision: idealVision,
-            selfieData: selfieData
+            selfieData: selfieData,
+            currentLocation: currentLocation,
+            locationHistory: [initialLocation]
         )
         
         // Save profile
         ProfileManager.shared.saveProfile(profile)
+        
+        // Create location entry in timeline
+        entryManager.addLocationEntry(userName: selectedName, location: currentLocation, isTravel: false)
         
         // Mark onboarding as complete
         UserDefaults.standard.set(true, forKey: "CC_ONBOARDING_COMPLETE")

@@ -16,38 +16,38 @@
 			containerPortal = 76E9386A2F21B74C000AE9F0 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 76E938712F21B74C000AE9F0;
-			remoteInfo = "CRACKHEAD CLUB";
+			remoteInfo = CC;
 		};
 		76E9388A2F21B74E000AE9F0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 76E9386A2F21B74C000AE9F0 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 76E938712F21B74C000AE9F0;
-			remoteInfo = "CRACKHEAD CLUB";
+			remoteInfo = CC;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		7615F7E02F220FEC00554E2D /* cclogo.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = cclogo.icon; sourceTree = "<group>"; };
-		76E938722F21B74C000AE9F0 /* CRACKHEAD CLUB.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "CRACKHEAD CLUB.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		76E9387F2F21B74E000AE9F0 /* CRACKHEAD CLUBTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "CRACKHEAD CLUBTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		76E938892F21B74E000AE9F0 /* CRACKHEAD CLUBUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "CRACKHEAD CLUBUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		76E938722F21B74C000AE9F0 /* CC.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CC.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		76E9387F2F21B74E000AE9F0 /* CCTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CCTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		76E938892F21B74E000AE9F0 /* CCUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CCUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		76E938742F21B74C000AE9F0 /* CRACKHEAD CLUB */ = {
+		76E938742F21B74C000AE9F0 /* CC */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "CRACKHEAD CLUB";
+			path = CC;
 			sourceTree = "<group>";
 		};
-		76E938822F21B74E000AE9F0 /* CRACKHEAD CLUBTests */ = {
+		76E938822F21B74E000AE9F0 /* CCTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "CRACKHEAD CLUBTests";
+			path = CCTests;
 			sourceTree = "<group>";
 		};
-		76E9388C2F21B74E000AE9F0 /* CRACKHEAD CLUBUITests */ = {
+		76E9388C2F21B74E000AE9F0 /* CCUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "CRACKHEAD CLUBUITests";
+			path = CCUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -80,9 +80,9 @@
 		76E938692F21B74C000AE9F0 = {
 			isa = PBXGroup;
 			children = (
-				76E938742F21B74C000AE9F0 /* CRACKHEAD CLUB */,
-				76E938822F21B74E000AE9F0 /* CRACKHEAD CLUBTests */,
-				76E9388C2F21B74E000AE9F0 /* CRACKHEAD CLUBUITests */,
+				76E938742F21B74C000AE9F0 /* CC */,
+				76E938822F21B74E000AE9F0 /* CCTests */,
+				76E9388C2F21B74E000AE9F0 /* CCUITests */,
 				76E938732F21B74C000AE9F0 /* Products */,
 				7615F7E02F220FEC00554E2D /* cclogo.icon */,
 			);
@@ -91,9 +91,9 @@
 		76E938732F21B74C000AE9F0 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				76E938722F21B74C000AE9F0 /* CRACKHEAD CLUB.app */,
-				76E9387F2F21B74E000AE9F0 /* CRACKHEAD CLUBTests.xctest */,
-				76E938892F21B74E000AE9F0 /* CRACKHEAD CLUBUITests.xctest */,
+				76E938722F21B74C000AE9F0 /* CC.app */,
+				76E9387F2F21B74E000AE9F0 /* CCTests.xctest */,
+				76E938892F21B74E000AE9F0 /* CCUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -101,9 +101,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		76E938712F21B74C000AE9F0 /* CRACKHEAD CLUB */ = {
+		76E938712F21B74C000AE9F0 /* CC */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 76E938932F21B74E000AE9F0 /* Build configuration list for PBXNativeTarget "CRACKHEAD CLUB" */;
+			buildConfigurationList = 76E938932F21B74E000AE9F0 /* Build configuration list for PBXNativeTarget "CC" */;
 			buildPhases = (
 				76E9386E2F21B74C000AE9F0 /* Sources */,
 				76E9386F2F21B74C000AE9F0 /* Frameworks */,
@@ -114,18 +114,18 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				76E938742F21B74C000AE9F0 /* CRACKHEAD CLUB */,
+				76E938742F21B74C000AE9F0 /* CC */,
 			);
-			name = "CRACKHEAD CLUB";
+			name = CC;
 			packageProductDependencies = (
 			);
-			productName = "CRACKHEAD CLUB";
-			productReference = 76E938722F21B74C000AE9F0 /* CRACKHEAD CLUB.app */;
+			productName = CC;
+			productReference = 76E938722F21B74C000AE9F0 /* CC.app */;
 			productType = "com.apple.product-type.application";
 		};
-		76E9387E2F21B74E000AE9F0 /* CRACKHEAD CLUBTests */ = {
+		76E9387E2F21B74E000AE9F0 /* CCTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 76E938962F21B74E000AE9F0 /* Build configuration list for PBXNativeTarget "CRACKHEAD CLUBTests" */;
+			buildConfigurationList = 76E938962F21B74E000AE9F0 /* Build configuration list for PBXNativeTarget "CCTests" */;
 			buildPhases = (
 				76E9387B2F21B74E000AE9F0 /* Sources */,
 				76E9387C2F21B74E000AE9F0 /* Frameworks */,
@@ -137,18 +137,18 @@
 				76E938812F21B74E000AE9F0 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				76E938822F21B74E000AE9F0 /* CRACKHEAD CLUBTests */,
+				76E938822F21B74E000AE9F0 /* CCTests */,
 			);
-			name = "CRACKHEAD CLUBTests";
+			name = CCTests;
 			packageProductDependencies = (
 			);
-			productName = "CRACKHEAD CLUBTests";
-			productReference = 76E9387F2F21B74E000AE9F0 /* CRACKHEAD CLUBTests.xctest */;
+			productName = CCTests;
+			productReference = 76E9387F2F21B74E000AE9F0 /* CCTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		76E938882F21B74E000AE9F0 /* CRACKHEAD CLUBUITests */ = {
+		76E938882F21B74E000AE9F0 /* CCUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 76E938992F21B74E000AE9F0 /* Build configuration list for PBXNativeTarget "CRACKHEAD CLUBUITests" */;
+			buildConfigurationList = 76E938992F21B74E000AE9F0 /* Build configuration list for PBXNativeTarget "CCUITests" */;
 			buildPhases = (
 				76E938852F21B74E000AE9F0 /* Sources */,
 				76E938862F21B74E000AE9F0 /* Frameworks */,
@@ -160,13 +160,13 @@
 				76E9388B2F21B74E000AE9F0 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				76E9388C2F21B74E000AE9F0 /* CRACKHEAD CLUBUITests */,
+				76E9388C2F21B74E000AE9F0 /* CCUITests */,
 			);
-			name = "CRACKHEAD CLUBUITests";
+			name = CCUITests;
 			packageProductDependencies = (
 			);
-			productName = "CRACKHEAD CLUBUITests";
-			productReference = 76E938892F21B74E000AE9F0 /* CRACKHEAD CLUBUITests.xctest */;
+			productName = CCUITests;
+			productReference = 76E938892F21B74E000AE9F0 /* CCUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -206,9 +206,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				76E938712F21B74C000AE9F0 /* CRACKHEAD CLUB */,
-				76E9387E2F21B74E000AE9F0 /* CRACKHEAD CLUBTests */,
-				76E938882F21B74E000AE9F0 /* CRACKHEAD CLUBUITests */,
+				76E938712F21B74C000AE9F0 /* CC */,
+				76E9387E2F21B74E000AE9F0 /* CCTests */,
+				76E938882F21B74E000AE9F0 /* CCUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -265,12 +265,12 @@
 /* Begin PBXTargetDependency section */
 		76E938812F21B74E000AE9F0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 76E938712F21B74C000AE9F0 /* CRACKHEAD CLUB */;
+			target = 76E938712F21B74C000AE9F0 /* CC */;
 			targetProxy = 76E938802F21B74E000AE9F0 /* PBXContainerItemProxy */;
 		};
 		76E9388B2F21B74E000AE9F0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 76E938712F21B74C000AE9F0 /* CRACKHEAD CLUB */;
+			target = 76E938712F21B74C000AE9F0 /* CC */;
 			targetProxy = 76E9388A2F21B74E000AE9F0 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -402,13 +402,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = cclogo;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = "CRACKHEAD CLUB/CRACKHEAD CLUB.entitlements";
+				CODE_SIGN_ENTITLEMENTS = CC/CC.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = YDR3VLMRZ7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = CC;
+				INFOPLIST_KEY_CFBundleDisplayName = CClub;
 				INFOPLIST_KEY_NSCameraUsageDescription = "We need access to your photo library to add images to your entries.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "We need access to save images to your photo library.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "We need access to your photo library to add images to your entries.";
@@ -422,7 +422,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = cc.CCApp;
+				PRODUCT_BUNDLE_IDENTIFIER = cc.crackheadclub.CCApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -439,13 +439,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = cclogo;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = "CRACKHEAD CLUB/CRACKHEAD CLUB.entitlements";
+				CODE_SIGN_ENTITLEMENTS = CC/CC.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = YDR3VLMRZ7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = CC;
+				INFOPLIST_KEY_CFBundleDisplayName = CClub;
 				INFOPLIST_KEY_NSCameraUsageDescription = "We need access to your photo library to add images to your entries.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "We need access to save images to your photo library.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "We need access to your photo library to add images to your entries.";
@@ -459,7 +459,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = cc.CCApp;
+				PRODUCT_BUNDLE_IDENTIFIER = cc.crackheadclub.CCApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -481,7 +481,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = cc.CCAppTests;
+				PRODUCT_BUNDLE_IDENTIFIER = cc.crackheadclub.CCAppTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -489,7 +489,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CRACKHEAD CLUB.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CRACKHEAD CLUB";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CC.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CC";
 			};
 			name = Debug;
 		};
@@ -503,7 +503,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = cc.CCAppTests;
+				PRODUCT_BUNDLE_IDENTIFIER = cc.crackheadclub.CCAppTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -511,7 +511,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CRACKHEAD CLUB.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CRACKHEAD CLUB";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CC.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CC";
 			};
 			name = Release;
 		};
@@ -523,7 +523,7 @@
 				DEVELOPMENT_TEAM = YDR3VLMRZ7;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = cc.CCAppUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = cc.crackheadclub.CCAppUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -531,7 +531,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = "CRACKHEAD CLUB";
+				TEST_TARGET_NAME = CC;
 			};
 			name = Debug;
 		};
@@ -543,7 +543,7 @@
 				DEVELOPMENT_TEAM = YDR3VLMRZ7;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = cc.CCAppUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = cc.crackheadclub.CCAppUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -551,7 +551,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = "CRACKHEAD CLUB";
+				TEST_TARGET_NAME = CC;
 			};
 			name = Release;
 		};
@@ -567,7 +567,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		76E938932F21B74E000AE9F0 /* Build configuration list for PBXNativeTarget "CRACKHEAD CLUB" */ = {
+		76E938932F21B74E000AE9F0 /* Build configuration list for PBXNativeTarget "CC" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				76E938942F21B74E000AE9F0 /* Debug */,
@@ -576,7 +576,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		76E938962F21B74E000AE9F0 /* Build configuration list for PBXNativeTarget "CRACKHEAD CLUBTests" */ = {
+		76E938962F21B74E000AE9F0 /* Build configuration list for PBXNativeTarget "CCTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				76E938972F21B74E000AE9F0 /* Debug */,
@@ -585,7 +585,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		76E938992F21B74E000AE9F0 /* Build configuration list for PBXNativeTarget "CRACKHEAD CLUBUITests" */ = {
+		76E938992F21B74E000AE9F0 /* Build configuration list for PBXNativeTarget "CCUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				76E9389A2F21B74E000AE9F0 /* Debug */,

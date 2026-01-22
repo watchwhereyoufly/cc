@@ -1,13 +1,13 @@
 //
-//  CRACKHEAD_CLUBUITestsLaunchTests.swift
-//  CRACKHEAD CLUBUITests
+//  CCUITestsLaunchTests.swift
+//  CCUITests
 //
 //  Created by Evan Roberts on 1/21/26.
 //
 
 import XCTest
 
-final class CRACKHEAD_CLUBUITestsLaunchTests: XCTestCase {
+final class CCUITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true

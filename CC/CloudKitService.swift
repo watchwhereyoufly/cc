@@ -20,8 +20,8 @@ class CloudKitService: ObservableObject {
     @Published var lastSyncError: Error?
     
     init() {
-        container = CKContainer(identifier: "iCloud.cc.CCApp")
-        database = container.privateCloudDatabase
+        container = CKContainer(identifier: "iCloud.cc.crackheadclub.CCApp")
+        database = container.publicCloudDatabase
         CloudKitService.shared = self
         setupSubscriptions()
     }

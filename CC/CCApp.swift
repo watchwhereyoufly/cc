@@ -31,6 +31,7 @@ struct CCApp: App {
                     SignInView(authManager: authManager)
                 } else if !UserDefaults.standard.bool(forKey: "CC_ONBOARDING_COMPLETE") || authManager.shouldShowOnboarding {
                     OnboardingView(authManager: authManager)
+                        .environmentObject(entryManager)
                 } else {
                     ContentView()
                         .environmentObject(entryManager)

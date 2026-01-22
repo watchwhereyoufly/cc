@@ -8,6 +8,11 @@
 import Foundation
 import CloudKit
 
+enum EntryType: String, Codable {
+    case regular
+    case locationUpdate
+}
+
 struct Entry: Identifiable, Codable {
     let id: UUID
     let person: String // "Ryan" or "Evan"
@@ -18,6 +23,9 @@ struct Entry: Identifiable, Codable {
     var lastModified: Date?
     var imageData: Data?
     var imageURL: String? // Local file URL for cached images
+    var authorID: String? // CloudKit user ID of who created this entry
+    var authorName: String? // Display name of who created this entry
+    var entryType: EntryType // Type of entry
     
     var cloudKitRecordID: CKRecord.ID? {
         get {
@@ -29,7 +37,7 @@ struct Entry: Identifiable, Codable {
         }
     }
     
-    init(id: UUID = UUID(), person: String, activity: String, assumption: String, timestamp: Date = Date(), cloudKitRecordID: CKRecord.ID? = nil, lastModified: Date? = nil, imageData: Data? = nil, imageURL: String? = nil) {
+    init(id: UUID = UUID(), person: String, activity: String, assumption: String, timestamp: Date = Date(), cloudKitRecordID: CKRecord.ID? = nil, lastModified: Date? = nil, imageData: Data? = nil, imageURL: String? = nil, authorID: String? = nil, authorName: String? = nil, entryType: EntryType = .regular) {
         self.id = id
         self.person = person
         self.activity = activity
@@ -39,6 +47,9 @@ struct Entry: Identifiable, Codable {
         self.lastModified = lastModified ?? timestamp
         self.imageData = imageData
         self.imageURL = imageURL
+        self.authorID = authorID
+        self.authorName = authorName
+        self.entryType = entryType
     }
     
     // MARK: - CloudKit Conversion
@@ -52,6 +63,17 @@ struct Entry: Identifiable, Codable {
         record["assumption"] = assumption
         record["timestamp"] = timestamp
         record["lastModified"] = lastModified ?? timestamp
+        
+        // Store author information
+        if let authorID = authorID {
+            record["authorID"] = authorID
+        }
+        if let authorName = authorName {
+            record["authorName"] = authorName
+        }
+        
+        // Store entry type
+        record["entryType"] = entryType.rawValue
         
         // Handle image as CKAsset
         if let imageData = imageData {
@@ -84,6 +106,16 @@ struct Entry: Identifiable, Codable {
         self.timestamp = timestamp
         self.cloudKitRecordID = record.recordID
         self.lastModified = record["lastModified"] as? Date ?? record.modificationDate ?? timestamp
+        self.authorID = record["authorID"] as? String
+        self.authorName = record["authorName"] as? String
+        
+        // Load entry type
+        if let typeString = record["entryType"] as? String,
+           let type = EntryType(rawValue: typeString) {
+            self.entryType = type
+        } else {
+            self.entryType = .regular // Default for old entries
+        }
         
         // Handle image from CKAsset
         if let imageAsset = record["image"] as? CKAsset {

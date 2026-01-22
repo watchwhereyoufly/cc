@@ -28,8 +28,8 @@ class ProfileManager: ObservableObject {
         Task {
             do {
                 let record = profile.toCKRecord()
-                let container = CKContainer(identifier: "iCloud.cc.CCApp")
-                let database = container.privateCloudDatabase
+                let container = CKContainer(identifier: "iCloud.cc.crackheadclub.CCApp")
+                let database = container.publicCloudDatabase
                 let _ = try await database.save(record)
                 print("✅ Saved profile to CloudKit")
             } catch {
@@ -60,8 +60,8 @@ class ProfileManager: ObservableObject {
         
         // Fetch from CloudKit
         do {
-            let container = CKContainer(identifier: "iCloud.cc.CC")
-            let database = container.privateCloudDatabase
+            let container = CKContainer(identifier: "iCloud.cc.crackheadclub.CCApp")
+            let database = container.publicCloudDatabase
             
             // Query for profile by name
             let predicate = NSPredicate(format: "name == %@", name)
