@@ -189,7 +189,7 @@ struct PersonEntryRowView: View {
     
     private var timeFormatter: DateFormatter {
         let formatter = DateFormatter()
-        formatter.dateFormat = "MMM d, yyyy h:mm a"
+        formatter.dateFormat = "EEE, MMM d, yyyy h:mm a"
         return formatter
     }
     

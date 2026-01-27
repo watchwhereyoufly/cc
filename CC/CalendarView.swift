@@ -288,7 +288,7 @@ struct CalendarEntryRowView: View {
     
     private var timeFormatter: DateFormatter {
         let formatter = DateFormatter()
-        formatter.dateFormat = "h:mm a"
+        formatter.dateFormat = "EEE, MMM d, yyyy h:mm a"
         return formatter
     }
     

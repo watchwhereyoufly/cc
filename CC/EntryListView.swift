@@ -16,8 +16,12 @@ struct EntryListView: View {
     private var filteredEntries: [Entry] {
         switch filter {
         case .entries:
-            // Only regular entries
-            return entryManager.entries.filter { $0.entryType == .regular }
+            // Only regular entries (exclude health data entries)
+            return entryManager.entries.filter { entry in
+                entry.entryType == .regular && 
+                !entry.activity.contains("woke up at") && 
+                !entry.activity.contains("just weighed in")
+            }
         case .activities:
             // Activity entries OR health data entries
             return entryManager.entries.filter { entry in
@@ -25,9 +29,6 @@ struct EntryListView: View {
                 entry.activity.contains("woke up at") || 
                 entry.activity.contains("just weighed in")
             }
-        case .all:
-            // Show everything
-            return entryManager.entries
         }
     }
     
@@ -155,7 +156,7 @@ struct EntryRowView: View {
     
     private var timeFormatter: DateFormatter {
         let formatter = DateFormatter()
-        formatter.dateFormat = "MMM d, yyyy h:mm a"
+        formatter.dateFormat = "EEE, MMM d, yyyy h:mm a"
         return formatter
     }
     
