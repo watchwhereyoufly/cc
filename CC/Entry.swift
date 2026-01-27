@@ -11,6 +11,7 @@ import CloudKit
 enum EntryType: String, Codable {
     case regular
     case locationUpdate
+    case activity
 }
 
 struct Entry: Identifiable, Codable {
@@ -26,6 +27,7 @@ struct Entry: Identifiable, Codable {
     var authorID: String? // CloudKit user ID of who created this entry
     var authorName: String? // Display name of who created this entry
     var entryType: EntryType // Type of entry
+    var activityDuration: String? // Duration for activity entries (e.g., "30 minutes", "1 hour")
     
     var cloudKitRecordID: CKRecord.ID? {
         get {
@@ -37,7 +39,7 @@ struct Entry: Identifiable, Codable {
         }
     }
     
-    init(id: UUID = UUID(), person: String, activity: String, assumption: String, timestamp: Date = Date(), cloudKitRecordID: CKRecord.ID? = nil, lastModified: Date? = nil, imageData: Data? = nil, imageURL: String? = nil, authorID: String? = nil, authorName: String? = nil, entryType: EntryType = .regular) {
+    init(id: UUID = UUID(), person: String, activity: String, assumption: String, timestamp: Date = Date(), cloudKitRecordID: CKRecord.ID? = nil, lastModified: Date? = nil, imageData: Data? = nil, imageURL: String? = nil, authorID: String? = nil, authorName: String? = nil, entryType: EntryType = .regular, activityDuration: String? = nil) {
         self.id = id
         self.person = person
         self.activity = activity
@@ -50,6 +52,7 @@ struct Entry: Identifiable, Codable {
         self.authorID = authorID
         self.authorName = authorName
         self.entryType = entryType
+        self.activityDuration = activityDuration
     }
     
     // MARK: - CloudKit Conversion
@@ -74,6 +77,11 @@ struct Entry: Identifiable, Codable {
         
         // Store entry type
         record["entryType"] = entryType.rawValue
+        
+        // Store activity duration if present
+        if let activityDuration = activityDuration {
+            record["activityDuration"] = activityDuration
+        }
         
         // Handle image as CKAsset
         if let imageData = imageData {
@@ -116,6 +124,9 @@ struct Entry: Identifiable, Codable {
         } else {
             self.entryType = .regular // Default for old entries
         }
+        
+        // Load activity duration
+        self.activityDuration = record["activityDuration"] as? String
         
         // Initialize optional properties before using self
         self.imageData = nil

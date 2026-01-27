@@ -37,6 +37,7 @@ struct CCApp: App {
                     SignInView(authManager: authManager)
                 } else if isLoadingProfile {
                     // Show loading while checking CloudKit for profile
+                    // Add timeout to prevent infinite loading
                     ZStack {
                         Color.black.ignoresSafeArea()
                         VStack {
@@ -46,6 +47,17 @@ struct CCApp: App {
                                 .foregroundColor(.terminalGreen)
                                 .font(.system(size: 15, design: .monospaced))
                                 .padding(.top, 16)
+                        }
+                    }
+                    .onAppear {
+                        // Set a timeout - if loading takes more than 5 seconds, assume no profile exists
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
+                            if ProfileManager.shared.isLoadingFromCloudKit {
+                                print("⚠️ Profile loading timeout - assuming no profile exists")
+                                ProfileManager.shared.isLoadingFromCloudKit = false
+                                ProfileManager.shared.currentProfile = nil
+                                UserDefaults.standard.set(false, forKey: "CC_ONBOARDING_COMPLETE")
+                            }
                         }
                     }
                 } else {

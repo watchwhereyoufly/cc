@@ -102,7 +102,7 @@ struct CalendarView: View {
         
         selectedDateEntries = entryManager.entries.filter { entry in
             entry.timestamp >= startOfDay && entry.timestamp < endOfDay
-        }.sorted { $0.timestamp > $1.timestamp }
+        }.sorted { $0.timestamp < $1.timestamp } // Oldest to newest (ascending)
     }
     
     private func formatDateKey(_ date: Date) -> String {
@@ -304,42 +304,95 @@ struct CalendarEntryRowView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            // Time
-            HStack {
-                Text("[\(timeFormatter.string(from: entry.timestamp))]")
-                    .foregroundColor(.terminalGreen.opacity(0.7))
-                    .font(.system(size: 10, design: .monospaced))
-                Spacer()
+            // Handle activity entries
+            if entry.entryType == .activity {
+                // Time
+                HStack {
+                    Text("[\(timeFormatter.string(from: entry.timestamp))]")
+                        .foregroundColor(.terminalGreen.opacity(0.7))
+                        .font(.system(size: 10, design: .monospaced))
+                    Spacer()
+                }
+                
+                // Activity entry
+                HStack(alignment: .top, spacing: 4) {
+                    Text("<@\(entry.person.lowercased())>")
+                        .foregroundColor(personColor)
+                        .font(.system(size: 15, design: .monospaced))
+                    
+                    Text(entry.activity)
+                        .foregroundColor(.purple)
+                        .font(.system(size: 15, design: .monospaced))
+                    
+                    Spacer()
+                }
             }
-            
-            // Activity
-            HStack(alignment: .top, spacing: 4) {
-                Text("<@\(entry.person.lowercased())>")
-                    .foregroundColor(personColor)
-                    .font(.system(size: 15, design: .monospaced))
+            // Handle location update entries
+            else if entry.entryType == .locationUpdate {
+                // Check if this is a travel entry (contains "is now in" or "returned home")
+                let isTravelEntry = entry.activity.contains("is now in") || entry.activity.contains("returned home")
                 
-                (Text("Activity: ")
-                    .foregroundColor(.cyan)
-                    + Text(entry.activity)
-                    .foregroundColor(.terminalGreen))
-                    .font(.system(size: 15, design: .monospaced))
+                // Time
+                HStack {
+                    Text("[\(timeFormatter.string(from: entry.timestamp))]")
+                        .foregroundColor(.terminalGreen.opacity(0.7))
+                        .font(.system(size: 10, design: .monospaced))
+                    Spacer()
+                }
                 
-                Spacer()
-            }
-            
-            // Assumption
-            HStack(alignment: .top, spacing: 4) {
-                Text("<@\(entry.person.lowercased())>")
-                    .foregroundColor(personColor)
-                    .font(.system(size: 15, design: .monospaced))
+                // Location entry
+                HStack(alignment: .top, spacing: 4) {
+                    Text("<@\(entry.person.lowercased())>")
+                        .foregroundColor(personColor)
+                        .font(.system(size: 15, design: .monospaced))
+                    
+                    Text(entry.activity)
+                        .foregroundColor(isTravelEntry ? .yellow : .terminalGreen)
+                        .font(.system(size: 15, design: .monospaced))
+                    
+                    Spacer()
+                }
+            } else {
+                // Regular entry display
+                // Time
+                HStack {
+                    Text("[\(timeFormatter.string(from: entry.timestamp))]")
+                        .foregroundColor(.terminalGreen.opacity(0.7))
+                        .font(.system(size: 10, design: .monospaced))
+                    Spacer()
+                }
                 
-                (Text("Assumption: ")
-                    .foregroundColor(.cyan)
-                    + Text(entry.assumption)
-                    .foregroundColor(.terminalGreen))
-                    .font(.system(size: 15, design: .monospaced))
+                // Activity
+                HStack(alignment: .top, spacing: 4) {
+                    Text("<@\(entry.person.lowercased())>")
+                        .foregroundColor(personColor)
+                        .font(.system(size: 15, design: .monospaced))
+                    
+                    (Text("Activity: ")
+                        .foregroundColor(.cyan)
+                        + Text(entry.activity)
+                        .foregroundColor(.terminalGreen))
+                        .font(.system(size: 15, design: .monospaced))
+                    
+                    Spacer()
+                }
                 
-                Spacer()
+                // Assumption
+                if !entry.assumption.isEmpty {
+                    HStack(alignment: .top, spacing: 4) {
+                        Text("<@\(entry.person.lowercased())>")
+                            .foregroundColor(personColor)
+                            .font(.system(size: 15, design: .monospaced))
+                        
+                        (Text("Assumption: ")
+                            .foregroundColor(.cyan)
+                            + Text(entry.assumption)
+                            .foregroundColor(.terminalGreen))
+                            .font(.system(size: 15, design: .monospaced))
+                        
+                        Spacer()
+                    }
+                }
             }
             
             // Image

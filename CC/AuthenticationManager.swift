@@ -67,6 +67,7 @@ class AuthenticationManager: NSObject, ObservableObject {
                     UserDefaults.standard.set(true, forKey: self.signInKey)
                     
                     // Load profile from CloudKit after authentication
+                    // This will set isLoadingFromCloudKit and then load or show onboarding
                     Task {
                         await ProfileManager.shared.loadProfileFromCloudKit()
                     }

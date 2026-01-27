@@ -34,7 +34,7 @@ struct EditNameView: View {
                 .padding()
                 
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("Who are you?")
+                    Text("What is your name?")
                         .foregroundColor(.terminalGreen)
                         .font(.system(size: 15, design: .monospaced))
                     

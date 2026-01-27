@@ -24,18 +24,11 @@ struct DateBreakView: View {
     
     var body: some View {
         HStack {
-            Rectangle()
-                .fill(Color.terminalGreen.opacity(0.3))
-                .frame(height: 1)
-            
+            Spacer()
             Text(dateFormatter.string(from: date))
                 .foregroundColor(.terminalGreen.opacity(0.7))
                 .font(.system(size: 12, design: .monospaced))
-                .padding(.horizontal, 12)
-            
-            Rectangle()
-                .fill(Color.terminalGreen.opacity(0.3))
-                .frame(height: 1)
+            Spacer()
         }
         .padding(.horizontal)
     }

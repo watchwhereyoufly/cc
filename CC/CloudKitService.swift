@@ -102,6 +102,40 @@ class CloudKitService: ObservableObject {
         }
     }
     
+    // MARK: - Delete All Entries by Author
+    func deleteAllEntriesByAuthor(_ authorID: String) async throws {
+        print("🗑️ Deleting all entries for authorID: \(authorID)")
+        
+        // Fetch all entries
+        let allEntries = try await fetchAllEntries()
+        
+        // Filter to only this user's entries
+        let userEntries = allEntries.filter { $0.authorID == authorID }
+        
+        print("   Found \(userEntries.count) entries to delete")
+        
+        // Delete each entry
+        var deletedCount = 0
+        var failedCount = 0
+        
+        for entry in userEntries {
+            if let recordID = entry.cloudKitRecordID {
+                do {
+                    try await database.deleteRecord(withID: recordID)
+                    deletedCount += 1
+                } catch {
+                    print("   ⚠️ Failed to delete entry \(entry.id): \(error)")
+                    failedCount += 1
+                }
+            } else {
+                print("   ⚠️ Entry \(entry.id) has no CloudKit record ID")
+                failedCount += 1
+            }
+        }
+        
+        print("✅ Deleted \(deletedCount) entries, \(failedCount) failed")
+    }
+    
     // MARK: - Setup Subscriptions
     func setupSubscriptions() {
         // Subscribe to new entries - use a queryable field in predicate to avoid recordName issues
@@ -173,6 +207,7 @@ class CloudKitService: ObservableObject {
         // CKQueryNotification doesn't have recordType, but we can check the subscription ID
         let subscriptionID = queryNotification.subscriptionID ?? ""
         if subscriptionID.contains("Entry") {
+            print("📬 Received CloudKit notification for Entry: \(subscriptionID)")
             return true
         }
         

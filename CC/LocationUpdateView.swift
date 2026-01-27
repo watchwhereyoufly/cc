@@ -18,6 +18,25 @@ struct LocationUpdateView: View {
     @State private var showLocationInput = false
     @State private var selectedAction: String? = nil
     
+    // Check if user is currently traveling
+    private var isCurrentlyTraveling: Bool {
+        guard let profile = profileManager.currentProfile else { return false }
+        // Check if the most recent location history entry is a travel entry
+        if let mostRecent = profile.locationHistory.sorted(by: { $0.date > $1.date }).first {
+            return mostRecent.isTravel
+        }
+        return false
+    }
+    
+    private var homeLocation: String? {
+        guard let profile = profileManager.currentProfile else { return nil }
+        // Find the most recent non-travel location (home)
+        return profile.locationHistory
+            .filter { !$0.isTravel }
+            .sorted(by: { $0.date > $1.date })
+            .first?.location ?? profile.currentLocation
+    }
+    
     var body: some View {
         ZStack {
             Color.black.ignoresSafeArea()
@@ -98,11 +117,17 @@ struct LocationUpdateView: View {
                         }
                         
                         Button(action: {
-                            isTravel = true
-                            showLocationInput = true
-                            selectedAction = "travel"
+                            if isCurrentlyTraveling {
+                                // Return home
+                                returnHome()
+                            } else {
+                                // Start new travel
+                                isTravel = true
+                                showLocationInput = true
+                                selectedAction = "travel"
+                            }
                         }) {
-                            Text("New Travel")
+                            Text(isCurrentlyTraveling ? "Return Home" : "New Travel")
                                 .foregroundColor(.black)
                                 .font(.system(size: 15, design: .monospaced))
                                 .frame(maxWidth: .infinity)
@@ -218,6 +243,24 @@ struct LocationUpdateView: View {
         
         if isTravel {
             // Just create entry, don't update profile
+            // Add to location history as travel
+            var updatedHistory = profile.locationHistory
+            let newLocationEntry = LocationHistory(location: newLocation, date: Date(), isTravel: true)
+            updatedHistory.append(newLocationEntry)
+            
+            let updatedProfile = UserProfile(
+                id: profile.id,
+                name: profile.name,
+                idealVision: profile.idealVision,
+                selfieData: profile.selfieData,
+                createdAt: profile.createdAt,
+                currentLocation: profile.currentLocation, // Don't update current location for travel
+                locationHistory: updatedHistory,
+                cloudKitRecordID: profile.cloudKitRecordID,
+                userCloudKitID: profile.userCloudKitID
+            )
+            
+            profileManager.saveProfile(updatedProfile)
             entryManager.addLocationEntry(userName: userName, location: newLocation, isTravel: true, whatFor: whatFor)
         } else {
             // Update profile with new location
@@ -233,12 +276,47 @@ struct LocationUpdateView: View {
                 createdAt: profile.createdAt,
                 currentLocation: newLocation,
                 locationHistory: updatedHistory,
-                cloudKitRecordID: profile.cloudKitRecordID
+                cloudKitRecordID: profile.cloudKitRecordID,
+                userCloudKitID: profile.userCloudKitID
             )
             
             profileManager.saveProfile(updatedProfile)
             entryManager.addLocationEntry(userName: userName, location: newLocation, isTravel: false)
         }
+        
+        dismiss()
+    }
+    
+    private func returnHome() {
+        guard let profile = profileManager.currentProfile else { return }
+        
+        // Get home location - use most recent non-travel location, or current location as fallback
+        let homeLocation = self.homeLocation ?? profile.currentLocation ?? "home"
+        
+        let userName = profile.name
+        
+        // Add return home entry to location history
+        var updatedHistory = profile.locationHistory
+        let returnHomeEntry = LocationHistory(location: homeLocation, date: Date(), isTravel: false)
+        updatedHistory.append(returnHomeEntry)
+        
+        // Update profile - set current location back to home
+        let updatedProfile = UserProfile(
+            id: profile.id,
+            name: profile.name,
+            idealVision: profile.idealVision,
+            selfieData: profile.selfieData,
+            createdAt: profile.createdAt,
+            currentLocation: homeLocation,
+            locationHistory: updatedHistory,
+            cloudKitRecordID: profile.cloudKitRecordID,
+            userCloudKitID: profile.userCloudKitID
+        )
+        
+        profileManager.saveProfile(updatedProfile)
+        
+        // Post "returned home" entry
+        entryManager.addLocationEntry(userName: userName, location: homeLocation, isTravel: false, whatFor: "", isReturnHome: true)
         
         dismiss()
     }

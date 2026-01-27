@@ -73,7 +73,7 @@ struct OnboardingView: View {
         VStack(spacing: 30) {
             Spacer()
             
-            Text("Who are you?")
+            Text("What is your name?")
                 .foregroundColor(.terminalGreen)
                 .font(.system(size: 20, design: .monospaced))
                 .padding(.bottom, 40)
@@ -116,7 +116,7 @@ struct OnboardingView: View {
         VStack(spacing: 30) {
             Spacer()
             
-            Text("What is your ideal vision?")
+            Text("Who are you?")
                 .foregroundColor(.terminalGreen)
                 .font(.system(size: 20, design: .monospaced))
             

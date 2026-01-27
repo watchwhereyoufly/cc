@@ -9,6 +9,8 @@ import SwiftUI
 
 struct EntryListView: View {
     @ObservedObject var entryManager: EntryManager
+    @State private var isRefreshing = false
+    @State private var dragOffset: CGFloat = 0
     
     var body: some View {
         ScrollViewReader { proxy in
@@ -30,20 +32,46 @@ struct EntryListView: View {
                                 
                                 EntryRowView(entry: entry, entryManager: entryManager)
                                     .id(entry.id)
-                                    .contextMenu {
-                                        Button(role: .destructive) {
-                                            entryManager.deleteEntry(entry)
-                                        } label: {
-                                            Label("Delete", systemImage: "trash")
-                                        }
-                                    }
                             }
                         }
+                        
+                        // Refresh indicator at bottom
+                        VStack(spacing: 8) {
+                            if isRefreshing {
+                                ProgressView()
+                                    .progressViewStyle(CircularProgressViewStyle(tint: .terminalGreen))
+                            } else if dragOffset > 50 {
+                                Text("Pull up to refresh")
+                                    .foregroundColor(.terminalGreen.opacity(0.7))
+                                    .font(.system(size: 11, design: .monospaced))
+                            }
+                        }
+                        .frame(height: 50)
+                        .frame(maxWidth: .infinity)
                     }
                 }
                 .padding(.horizontal)
                 .padding(.vertical, 8)
             }
+            .simultaneousGesture(
+                DragGesture(minimumDistance: 0)
+                    .onChanged { value in
+                        // Detect upward drag (positive translation.height = dragging up)
+                        if value.translation.height > 0 && !isRefreshing {
+                            dragOffset = value.translation.height
+                        }
+                    }
+                    .onEnded { value in
+                        if value.translation.height > 80 && !isRefreshing {
+                            // Trigger refresh when dragged up enough
+                            Task {
+                                await refreshEntries()
+                            }
+                        } else {
+                            dragOffset = 0
+                        }
+                    }
+            )
             .onAppear {
                 // Scroll to bottom (newest) when view appears
                 if let lastEntry = entryManager.entries.last {
@@ -62,12 +90,41 @@ struct EntryListView: View {
             }
         }
     }
+    
+    private func refreshEntries() async {
+        guard !isRefreshing else { return }
+        isRefreshing = true
+        dragOffset = 0
+        
+        // Trigger CloudKit sync
+        entryManager.syncWithCloudKit()
+        
+        // Wait for sync to complete
+        while entryManager.isSyncing {
+            try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
+        }
+        
+        // Small delay to ensure UI updates are complete
+        try? await Task.sleep(nanoseconds: 200_000_000) // 0.2 seconds
+        
+        isRefreshing = false
+    }
 }
 
 struct EntryRowView: View {
     let entry: Entry
     @ObservedObject var entryManager: EntryManager
     @State private var showPersonProfile = false
+    @State private var showEditEntry = false
+    
+    // Check if this entry belongs to the current user
+    private var isOwnEntry: Bool {
+        guard let currentUserID = entryManager.currentUserID,
+              let entryAuthorID = entry.authorID else {
+            return false
+        }
+        return currentUserID == entryAuthorID
+    }
     
     private var timeFormatter: DateFormatter {
         let formatter = DateFormatter()
@@ -87,8 +144,37 @@ struct EntryRowView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
+            // Handle activity entries
+            if entry.entryType == .activity {
+                // Timestamp at top
+                HStack {
+                    Spacer()
+                    Text("[\(timeFormatter.string(from: entry.timestamp))]")
+                        .foregroundColor(.terminalGreen.opacity(0.7))
+                        .font(.system(size: 10, design: .monospaced))
+                }
+                
+                // Activity entry with color-coded person name
+                HStack(alignment: .top, spacing: 4) {
+                    Button(action: {
+                        showPersonProfile = true
+                    }) {
+                        Text("<@\(entry.person.lowercased())>")
+                            .foregroundColor(personColor)
+                            .font(.system(size: 15, design: .monospaced))
+                    }
+                    
+                    Text(entry.activity)
+                        .foregroundColor(.purple)
+                        .font(.system(size: 15, design: .monospaced))
+                    
+                    Spacer()
+                }
+            }
             // Handle location update entries with same formatting as regular entries
-            if entry.entryType == .locationUpdate {
+            else if entry.entryType == .locationUpdate {
+                // All location entries should be yellow
+                
                 // Timestamp at top
                 HStack {
                     Spacer()
@@ -108,7 +194,7 @@ struct EntryRowView: View {
                     }
                     
                     Text(entry.activity)
-                        .foregroundColor(.terminalGreen)
+                        .foregroundColor(.yellow)
                         .font(.system(size: 15, design: .monospaced))
                     
                     Spacer()
@@ -183,8 +269,25 @@ struct EntryRowView: View {
         }
         .padding(.vertical, 8)
         .padding(.horizontal, 4)
+        .contextMenu {
+            if isOwnEntry {
+                Button(action: {
+                    showEditEntry = true
+                }) {
+                    Label("Edit", systemImage: "pencil")
+                }
+                Button(role: .destructive, action: {
+                    entryManager.deleteEntry(entry)
+                }) {
+                    Label("Delete", systemImage: "trash")
+                }
+            }
+        }
         .sheet(isPresented: $showPersonProfile) {
             PersonProfileView(personName: entry.person, entryManager: entryManager)
+        }
+        .sheet(isPresented: $showEditEntry) {
+            EditEntryView(entry: entry, entryManager: entryManager)
         }
     }
 }

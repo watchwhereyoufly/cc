@@ -72,17 +72,42 @@ You need to ensure these record types exist in CloudKit Dashboard:
 ### UserProfile Record Type:
 1. Create/verify "UserProfile" record type with these fields:
    - `id` (String)
-   - `name` (String)
+   - `name` (String) - **MUST BE QUERYABLE** ⚠️
    - `idealVision` (String)
    - `createdAt` (Date/Time)
    - `currentLocation` (String) - **NEW**
    - `locationHistory` (String) - **NEW** (stores JSON)
+   - `userCloudKitID` (String) - **MUST BE QUERYABLE** ⚠️ **NEW**
    - `selfie` (Asset)
 
 ### Important:
 - Both record types must be enabled for **Public Database**
 - Deploy schema changes after adding new fields
 - The `entryType` field should allow values: "regular", "locationUpdate"
+
+### ⚠️ REQUIRED INDEXES FOR PROFILE LOOKUP:
+For the profile lookup feature to work, you **MUST** add Queryable indexes to:
+
+1. **UserProfile → `name` field**:
+   - Go to CloudKit Dashboard → Schema → Record Types → UserProfile
+   - Find the `name` field
+   - Click the three dots (⋯) or edit icon
+   - Enable **"Queryable"** index
+   - This allows searching profiles by name
+
+2. **UserProfile → `userCloudKitID` field**:
+   - In the same UserProfile record type
+   - Find the `userCloudKitID` field (if it doesn't exist, it will be auto-created when a profile is saved)
+   - Enable **"Queryable"** index
+   - This allows finding profiles by the user's CloudKit ID (more reliable than name)
+
+3. **Entry → `timestamp` field**:
+   - Go to Entry record type
+   - Find the `timestamp` field
+   - Enable **"Queryable"** index (and optionally "Sortable")
+   - This is needed for subscriptions and sorting
+
+After enabling indexes, click **"Deploy Schema Changes..."** button to apply them.
 
 ## ✅ Code Verification
 

@@ -16,6 +16,8 @@ struct ProfileView: View {
     @State private var showEditName = false
     @State private var showEditIdealVision = false
     @State private var showEditSelfie = false
+    @State private var showResetConfirmation = false
+    @State private var showNotifications = false
     
     var body: some View {
         ZStack {
@@ -28,7 +30,18 @@ struct ProfileView: View {
                         Text("Profile")
                             .foregroundColor(Color.terminalGreen)
                             .font(.system(size: 20, design: .monospaced))
+                            .contentShape(Rectangle())
+                            .onLongPressGesture(minimumDuration: 2.0) {
+                                resetProfileAndOnboarding()
+                            }
                         Spacer()
+                        Button(action: {
+                            showNotifications = true
+                        }) {
+                            Image(systemName: "bell")
+                                .foregroundColor(Color.terminalGreen)
+                                .font(.system(size: 18))
+                        }
                         Button(action: {
                             dismiss()
                         }) {
@@ -45,7 +58,7 @@ struct ProfileView: View {
                             showEditName = true
                         }) {
                             VStack(alignment: .leading, spacing: 8) {
-                                Text("Who are you?")
+                                Text("What is your name?")
                                     .foregroundColor(Color.terminalGreen.opacity(0.6))
                                     .font(.system(size: 13, design: .monospaced))
                                 HStack {
@@ -66,7 +79,7 @@ struct ProfileView: View {
                             showEditIdealVision = true
                         }) {
                             VStack(alignment: .leading, spacing: 8) {
-                                Text("What is your ideal vision?")
+                                Text("Who are you?")
                                     .foregroundColor(Color.terminalGreen.opacity(0.6))
                                     .font(.system(size: 13, design: .monospaced))
                                 HStack(alignment: .top) {
@@ -161,6 +174,19 @@ struct ProfileView: View {
                             }
                             .padding(.horizontal)
                         }
+                        
+                        // CC Member since date
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("CC Member since")
+                                .foregroundColor(Color.terminalGreen.opacity(0.6))
+                                .font(.system(size: 13, design: .monospaced))
+                            
+                            Text(formatMemberDate(profile.createdAt))
+                                .foregroundColor(Color.terminalGreen)
+                                .font(.system(size: 15, design: .monospaced))
+                        }
+                        .padding(.horizontal)
+                        .padding(.top, 8)
                     } else {
                         Text("No profile data found")
                             .foregroundColor(Color.terminalGreen.opacity(0.6))
@@ -184,5 +210,64 @@ struct ProfileView: View {
         .sheet(isPresented: $showEditSelfie) {
             EditSelfieView()
         }
+        .sheet(isPresented: $showNotifications) {
+            NotificationsView()
+        }
+        .alert("Reset Profile?", isPresented: $showResetConfirmation) {
+            Button("Cancel", role: .cancel) { }
+            Button("Reset", role: .destructive) {
+                performReset()
+            }
+        } message: {
+            Text("This will delete your profile, all your entries, reset onboarding, and sign you out. You'll need to go through onboarding again. Continue?")
+        }
+    }
+    
+    private func resetProfileAndOnboarding() {
+        showResetConfirmation = true
+    }
+    
+    private func performReset() {
+        Task {
+            // Get user ID before clearing everything
+            let userID = entryManager.currentUserID
+            
+            // Delete all user entries from CloudKit
+            if let userID = userID {
+                await entryManager.deleteAllUserEntries()
+            }
+            
+            // Delete profile from CloudKit
+            if let profile = profileManager.currentProfile {
+                await profileManager.deleteProfile(profile)
+            }
+            
+            // Clear all local data
+            UserDefaults.standard.removeObject(forKey: "CC_USER_PROFILE")
+            UserDefaults.standard.removeObject(forKey: "CC_ENTRIES")
+            UserDefaults.standard.set(false, forKey: "CC_ONBOARDING_COMPLETE")
+            UserDefaults.standard.set(false, forKey: "CC_HAS_SIGNED_IN")
+            
+            // Clear in-memory data
+            await MainActor.run {
+                profileManager.currentProfile = nil
+                entryManager.entries = []
+                
+                // Reset authentication
+                authManager.isAuthenticated = false
+                authManager.hasCompletedSignIn = false
+                authManager.shouldShowOnboarding = true
+                authManager.currentUserID = nil
+            }
+            
+            // Dismiss and the app will show sign-in screen
+            dismiss()
+        }
+    }
+    
+    private func formatMemberDate(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMM d, yyyy"
+        return formatter.string(from: date)
     }
 }

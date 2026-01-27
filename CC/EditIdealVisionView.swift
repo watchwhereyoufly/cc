@@ -34,7 +34,7 @@ struct EditIdealVisionView: View {
                 .padding()
                 
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("What is your ideal vision?")
+                    Text("Who are you?")
                         .foregroundColor(.terminalGreen)
                         .font(.system(size: 15, design: .monospaced))
                     
