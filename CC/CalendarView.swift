@@ -354,6 +354,9 @@ struct CalendarEntryRowView: View {
                 }
             } else {
                 // Regular entry display
+                // Check if this is a health update (sleep or weight)
+                let isHealthUpdate = entry.activity.contains("woke up at") || entry.activity.contains("just weighed in")
+                
                 // Time
                 HStack {
                     Text("[\(timeFormatter.string(from: entry.timestamp))]")
@@ -368,11 +371,18 @@ struct CalendarEntryRowView: View {
                         .foregroundColor(personColor)
                         .font(.system(size: 15, design: .monospaced))
                     
-                    (Text("Activity: ")
-                        .foregroundColor(.cyan)
-                        + Text(entry.activity)
-                        .foregroundColor(.terminalGreen))
-                        .font(.system(size: 15, design: .monospaced))
+                    if isHealthUpdate {
+                        // HealthKit entries display without "Activity:" label
+                        Text(entry.activity)
+                            .foregroundColor(.white)
+                            .font(.system(size: 15, design: .monospaced))
+                    } else {
+                        (Text("Activity: ")
+                            .foregroundColor(.cyan)
+                            + Text(entry.activity)
+                            .foregroundColor(.terminalGreen))
+                            .font(.system(size: 15, design: .monospaced))
+                    }
                     
                     Spacer()
                 }

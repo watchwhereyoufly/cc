@@ -74,6 +74,22 @@ struct CCApp: App {
                             .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
                                 // Sync when app becomes active
                                 entryManager.syncWithCloudKit()
+                                // Sync HealthKit data if enabled
+                                if HealthKitManager.shared.autoPostWorkouts {
+                                    HealthKitManager.shared.syncRecentWorkouts()
+                                }
+                                if HealthKitManager.shared.autoPostSleep {
+                                    HealthKitManager.shared.syncRecentSleep()
+                                }
+                                if HealthKitManager.shared.autoPostWeight {
+                                    HealthKitManager.shared.syncRecentWeight()
+                                }
+                            }
+                            .onAppear {
+                                // Request HealthKit authorization if auto-post is enabled
+                                if HealthKitManager.shared.autoPostWorkouts {
+                                    HealthKitManager.shared.requestAuthorization()
+                                }
                             }
                     }
                 }

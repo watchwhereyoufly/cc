@@ -61,6 +61,68 @@ class EntryManager: ObservableObject {
                 self?.syncWithCloudKit()
             }
             .store(in: &cancellables)
+        
+        // Observe HealthKit workout notifications
+        NotificationCenter.default.publisher(for: NSNotification.Name("HealthKitWorkoutCompleted"))
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] notification in
+                guard let self = self,
+                      let userInfo = notification.userInfo,
+                      let workoutType = userInfo["workoutType"] as? String,
+                      let duration = userInfo["duration"] as? String,
+                      let personName = userInfo["personName"] as? String else {
+                    return
+                }
+                
+                // Create activity entry for the workout
+                self.addActivityEntry(
+                    person: personName,
+                    activityName: workoutType,
+                    duration: duration
+                )
+            }
+            .store(in: &cancellables)
+        
+        // Observe HealthKit sleep notifications
+        NotificationCenter.default.publisher(for: NSNotification.Name("HealthKitSleepCompleted"))
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] notification in
+                guard let self = self,
+                      let userInfo = notification.userInfo,
+                      let sleepData = userInfo["sleepData"] as? String,
+                      let wakeUpTime = userInfo["wakeUpTime"] as? String,
+                      let personName = userInfo["personName"] as? String else {
+                    return
+                }
+                
+                // Create regular entry for sleep: "<user> woke up at [time]. [sleep data]"
+                self.addEntry(
+                    person: personName,
+                    activity: "woke up at \(wakeUpTime). \(sleepData)",
+                    assumption: ""
+                )
+            }
+            .store(in: &cancellables)
+        
+        // Observe HealthKit weight notifications
+        NotificationCenter.default.publisher(for: NSNotification.Name("HealthKitWeightCompleted"))
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] notification in
+                guard let self = self,
+                      let userInfo = notification.userInfo,
+                      let weight = userInfo["weight"] as? String,
+                      let personName = userInfo["personName"] as? String else {
+                    return
+                }
+                
+                // Create regular entry for weight: "<user> just weighed in at [weight]"
+                self.addEntry(
+                    person: personName,
+                    activity: "just weighed in at \(weight)",
+                    assumption: ""
+                )
+            }
+            .store(in: &cancellables)
     }
     
     func addLocationEntry(userName: String, location: String, isTravel: Bool = false, whatFor: String = "", isReturnHome: Bool = false) {

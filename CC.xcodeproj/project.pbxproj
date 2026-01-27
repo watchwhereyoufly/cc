@@ -410,6 +410,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = CClub;
 				INFOPLIST_KEY_NSCameraUsageDescription = "We need access to your photo library to add images to your entries.";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "CC needs access to your workout data to automatically post your exercises as activity entries.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "CC needs access to update your health data to automatically post your workouts, sleep, and weight as entries.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "We need access to save images to your photo library.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "We need access to your photo library to add images to your entries.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -420,7 +422,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.1;
+				MARKETING_VERSION = 3.1;
 				PRODUCT_BUNDLE_IDENTIFIER = cc.crackheadclub.CCApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -446,6 +448,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = CClub;
 				INFOPLIST_KEY_NSCameraUsageDescription = "We need access to your photo library to add images to your entries.";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "CC needs access to your workout data to automatically post your exercises as activity entries.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "CC needs access to update your health data to automatically post your workouts, sleep, and weight as entries.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "We need access to save images to your photo library.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "We need access to your photo library to add images to your entries.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -456,7 +460,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.1;
+				MARKETING_VERSION = 3.1;
 				PRODUCT_BUNDLE_IDENTIFIER = cc.crackheadclub.CCApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;

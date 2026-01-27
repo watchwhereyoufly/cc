@@ -9,23 +9,42 @@ import SwiftUI
 
 struct EntryListView: View {
     @ObservedObject var entryManager: EntryManager
+    let filter: ContentView.FeedFilter
     @State private var isRefreshing = false
     @State private var dragOffset: CGFloat = 0
+    
+    private var filteredEntries: [Entry] {
+        switch filter {
+        case .entries:
+            // Only regular entries
+            return entryManager.entries.filter { $0.entryType == .regular }
+        case .activities:
+            // Activity entries OR health data entries
+            return entryManager.entries.filter { entry in
+                entry.entryType == .activity || 
+                entry.activity.contains("woke up at") || 
+                entry.activity.contains("just weighed in")
+            }
+        case .all:
+            // Show everything
+            return entryManager.entries
+        }
+    }
     
     var body: some View {
         ScrollViewReader { proxy in
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 4) {
-                    if entryManager.entries.isEmpty {
+                    if filteredEntries.isEmpty {
                         Text("No entries yet. Start manifesting!")
                             .foregroundColor(.terminalGreen.opacity(0.6))
                             .font(.system(size: 15, design: .monospaced))
                             .padding()
                     } else {
-                        ForEach(Array(entryManager.entries.enumerated()), id: \.element.id) { index, entry in
+                        ForEach(Array(filteredEntries.enumerated()), id: \.element.id) { index, entry in
                             VStack(spacing: 0) {
                                 // Show date break if this is a new day
-                                if index == 0 || !Calendar.current.isDate(entryManager.entries[index - 1].timestamp, inSameDayAs: entry.timestamp) {
+                                if index == 0 || !Calendar.current.isDate(filteredEntries[index - 1].timestamp, inSameDayAs: entry.timestamp) {
                                     DateBreakView(date: entry.timestamp)
                                         .padding(.vertical, 8)
                                 }
@@ -74,7 +93,7 @@ struct EntryListView: View {
             )
             .onAppear {
                 // Scroll to bottom (newest) when view appears
-                if let lastEntry = entryManager.entries.last {
+                if let lastEntry = filteredEntries.last {
                     withAnimation {
                         proxy.scrollTo(lastEntry.id, anchor: .bottom)
                     }
@@ -82,7 +101,15 @@ struct EntryListView: View {
             }
             .onChange(of: entryManager.entries.count) { _ in
                 // Auto-scroll to bottom when new entries are added
-                if let lastEntry = entryManager.entries.last {
+                if let lastEntry = filteredEntries.last {
+                    withAnimation {
+                        proxy.scrollTo(lastEntry.id, anchor: .bottom)
+                    }
+                }
+            }
+            .onChange(of: filter) { _ in
+                // Scroll to bottom when filter changes
+                if let lastEntry = filteredEntries.last {
                     withAnimation {
                         proxy.scrollTo(lastEntry.id, anchor: .bottom)
                     }
@@ -201,6 +228,9 @@ struct EntryRowView: View {
                 }
             } else {
                 // Regular entry display
+                // Check if this is a health update (sleep or weight)
+                let isHealthUpdate = entry.activity.contains("woke up at") || entry.activity.contains("just weighed in")
+                
                 // Timestamp at top
                 HStack {
                     Spacer()
@@ -219,11 +249,18 @@ struct EntryRowView: View {
                             .font(.system(size: 15, design: .monospaced))
                     }
                     
-                    (Text("Activity: ")
-                        .foregroundColor(.cyan)
-                        + Text(entry.activity)
-                        .foregroundColor(.terminalGreen))
-                        .font(.system(size: 15, design: .monospaced))
+                    if isHealthUpdate {
+                        // HealthKit entries display without "Activity:" label
+                        Text(entry.activity)
+                            .foregroundColor(.white)
+                            .font(.system(size: 15, design: .monospaced))
+                    } else {
+                        (Text("Activity: ")
+                            .foregroundColor(.cyan)
+                            + Text(entry.activity)
+                            .foregroundColor(.terminalGreen))
+                            .font(.system(size: 15, design: .monospaced))
+                    }
                     
                     Spacer()
                 }
